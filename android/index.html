@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StajPilot for Android — Setup &amp; Support</title>
+<meta name="description" content="How to connect StajPilot to a KEMPER PROFILER Player over USB MIDI or Bluetooth MIDI on Android, plus troubleshooting.">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="wordmark">Staj<span class="pilot">Pilot</span></div>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="../index.html">Home</a>
+      <a href="../ios/index.html">iPhone &amp; iPad</a>
+      <a href="../android/index.html" aria-current="page">Android</a>
+      <a href="../support/index.html">Support</a>
+      <a href="../privacy/index.html">Privacy</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1>StajPilot for Android</h1>
+  <p class="lede">Connect over wired USB MIDI to your KEMPER PROFILER Player, with optional Bluetooth MIDI pedal support.</p>
+
+  <h2>How to connect over USB</h2>
+  <ol class="steps">
+    <li>Use a USB OTG adapter, or a cable that supports OTG.</li>
+    <li>Your Android phone or tablet needs to act as the USB Host.</li>
+    <li>Connect to the USB-B port on the KEMPER PROFILER Player.</li>
+    <li>When Android shows a USB access permission prompt, select StajPilot and allow it.</li>
+    <li>Open StajPilot.</li>
+  </ol>
+
+  <h2>Android USB notes</h2>
+  <ul>
+    <li>The exact USB settings screen varies by manufacturer and Android version.</li>
+    <li>Some devices require selecting a "USB MIDI" or "connected device control" option manually.</li>
+    <li>An OTG adapter that assigns the USB role automatically tends to give the most reliable connection.</li>
+    <li>Charge-only cables will not work — the cable/adapter must support data.</li>
+  </ul>
+
+  <h2>Bluetooth MIDI pedals</h2>
+  <ul>
+    <li>On Android, StajPilot can use Bluetooth MIDI pedals that are already registered with the operating system.</li>
+    <li>Pair the pedal in Android's system Bluetooth settings first.</li>
+    <li>The app only uses MIDI signals from devices already paired at the system level.</li>
+    <li>Bluetooth device information and MIDI data are never sent to any external server.</li>
+    <li>Bluetooth MIDI may require the Nearby Devices or Bluetooth permission.</li>
+    <li>Location data is never collected or stored.</li>
+  </ul>
+
+  <h2>Troubleshooting</h2>
+
+  <h3>No USB permission prompt appears</h3>
+  <p>Disconnect and reconnect the cable/adapter, and make sure your device supports USB Host (OTG) mode. Some budget devices do not support USB Host mode at all.</p>
+
+  <h3>USB mode changes every time you connect</h3>
+  <p>Try an OTG adapter that fixes the USB role, rather than a plain cable — this is usually more consistent than relying on the phone's automatic role detection.</p>
+
+  <h3>Device isn't recognized without OTG</h3>
+  <p>A direct cable without OTG support will not put the phone into USB Host mode. Use a proper OTG adapter or OTG-capable cable.</p>
+
+  <h3>A Bluetooth pedal is connected but the app doesn't respond</h3>
+  <p>Confirm the pedal is paired (not just powered on) in Android's Bluetooth settings, and that StajPilot has Bluetooth/Nearby Devices permission.</p>
+
+  <h3>Reconnecting after powering a pedal off and back on</h3>
+  <p>Most Bluetooth MIDI pedals reconnect automatically once they're already paired — if not, toggle Bluetooth off and on, or reopen the pedal's Bluetooth menu.</p>
+
+  <h3>Using multiple Bluetooth MIDI pedals</h3>
+  <p>Pair each pedal individually in Android's Bluetooth settings before opening StajPilot.</p>
+
+  <h3>Checking connection status after reopening the app from the background</h3>
+  <p>StajPilot shows its current USB/Bluetooth connection state on screen — no serial console or extra app is needed to check it.</p>
+
+  <div class="notice">
+    <p>Still stuck? Contact <a href="../support/index.html">Support</a> with your device model, Android version, Player firmware version, the cable/adapter you're using, and your Bluetooth pedal model if applicable.</p>
+  </div>
+
+  <div class="legal">
+    <p>StajPilot is an independent third-party application and is not affiliated with or endorsed by Kemper GmbH.</p>
+    <p>Compatibility and proper operation with the KEMPER PROFILER Player are not guaranteed. Changes to device hardware, firmware, communication protocols, or operating systems may affect, limit, or discontinue some or all functionality.</p>
+    <p>KEMPER and PROFILER are trademarks of Kemper GmbH. All other trademarks belong to their respective owners.</p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>StajPilot &copy; 2026</div>
+    <div class="footer-links">
+      <a href="../privacy/index.html">Privacy</a>
+      <a href="mailto:sk5054@hotmail.com">sk5054@hotmail.com</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

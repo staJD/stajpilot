@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StajPilot for iPhone & iPad — Setup &amp; Support</title>
+<meta name="description" content="How to connect StajPilot to a KEMPER PROFILER Player over USB MIDI on iPhone and iPad, plus troubleshooting.">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="wordmark">Staj<span class="pilot">Pilot</span></div>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="../index.html">Home</a>
+      <a href="../ios/index.html" aria-current="page">iPhone &amp; iPad</a>
+      <a href="../android/index.html">Android</a>
+      <a href="../support/index.html">Support</a>
+      <a href="../privacy/index.html">Privacy</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1>StajPilot for iPhone &amp; iPad</h1>
+  <p class="lede">Connect over wired USB MIDI to your KEMPER PROFILER Player. No account, no internet connection, no pairing.</p>
+
+  <h2>How to connect</h2>
+  <ol class="steps">
+    <li>Get a USB cable that supports data (not a charge-only cable).</li>
+    <li>Connect your iPhone or iPad to the USB-B port on the KEMPER PROFILER Player.</li>
+    <li>Open StajPilot.</li>
+    <li>Once MIDI data is received, the app switches from the waiting screen to the main display automatically.</li>
+  </ol>
+
+  <h2>About OTG / USB Host adapters</h2>
+  <ul>
+    <li>A compatible USB Host or OTG adapter is recommended — it helps the device recognize its USB role correctly and improves connection reliability.</li>
+    <li>Charge-only cables will not work — the cable must support data.</li>
+    <li>If USB role detection behaves differently depending on cable orientation or the order things are plugged in, use an OTG adapter instead of a direct cable.</li>
+  </ul>
+
+  <h2>Troubleshooting</h2>
+
+  <h3>Stuck on the "Waiting for Device" screen</h3>
+  <p>Confirm the cable supports data, confirm it's connected to the Player's USB-B port, and confirm the Player is powered on. Try unplugging and reconnecting the cable after fully closing StajPilot (see below).</p>
+
+  <h3>Shows "USB Connected" but no MIDI info appears</h3>
+  <p>This usually means a data connection exists but the Player hasn't started sending MIDI data yet. Check the Player's firmware version, and try reconnecting the cable.</p>
+
+  <h3>Reopening the app from the background doesn't reconnect</h3>
+  <p>Fully close StajPilot from the app switcher, disconnect the USB cable, then reconnect it and reopen the app.</p>
+
+  <h3>Another MIDI app is holding the USB connection</h3>
+  <p>Close any other app that may be using MIDI over USB, then reopen StajPilot.</p>
+
+  <h3>The cable or adapter isn't recognized</h3>
+  <p>Try a different data-capable USB cable, or add a USB Host/OTG adapter between the cable and the device.</p>
+
+  <h3>General reset steps</h3>
+  <ol class="steps">
+    <li>Close StajPilot completely (remove it from the app switcher).</li>
+    <li>Disconnect the USB cable from either end.</li>
+    <li>Confirm the KEMPER PROFILER Player is powered on and its firmware is up to date.</li>
+    <li>Reconnect the USB cable.</li>
+    <li>Reopen StajPilot.</li>
+  </ol>
+
+  <div class="notice">
+    <p>Still stuck? Contact <a href="../support/index.html">Support</a> with your device model, iOS/iPadOS version, Player firmware version, and the cable/adapter you're using.</p>
+  </div>
+
+  <div class="legal">
+    <p>StajPilot is an independent third-party application and is not affiliated with or endorsed by Kemper GmbH.</p>
+    <p>Compatibility and proper operation with the KEMPER PROFILER Player are not guaranteed. Changes to device hardware, firmware, communication protocols, or operating systems may affect, limit, or discontinue some or all functionality.</p>
+    <p>KEMPER and PROFILER are trademarks of Kemper GmbH. All other trademarks belong to their respective owners.</p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>StajPilot &copy; 2026</div>
+    <div class="footer-links">
+      <a href="../privacy/index.html">Privacy</a>
+      <a href="mailto:sk5054@hotmail.com">sk5054@hotmail.com</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
