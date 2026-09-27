@@ -44,6 +44,9 @@
 .streaming-note { padding: 28px 0; margin-top: 30px; border-top: 1px solid var(--border); }
 .streaming-note p { max-width: 890px; margin-bottom: 0; }
 .ios-page .demo-note { margin: 0; font-size: 14px; }
+.version-note { padding: 20px 0; margin-bottom: 12px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.version-note p { max-width: 880px; }
+.version-note p:last-child { margin-bottom: 0; }
 .connection-steps { list-style: none; margin: 0 0 34px; padding: 0; }
 .connection-steps li { display: grid; grid-template-columns: 62px 1fr; gap: 12px; padding: 22px 0; border-bottom: 1px solid var(--border); margin: 0; }
 .step-number { font-size: 27px; color: var(--accent-link); font-weight: 700; line-height: 1.3; }
