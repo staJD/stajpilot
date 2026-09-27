@@ -294,6 +294,15 @@ ol.steps li::before {
 .bilingual ol { padding-left: 20px; }
 .bilingual li { font-size: 15px; color: var(--ink-dim); margin-bottom: 12px; }
 
+/* ---------- iOS page prologue ---------- */
+.prologue {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 28px;
+  margin-bottom: 36px;
+}
+.prologue p { font-size: 15px; line-height: 1.75; color: var(--ink-dim); margin-bottom: 10px; }
+.prologue p:first-of-type { color: var(--ink); font-weight: 700; }
+
 /* ---------- support contact block ---------- */
 .contact-block {
   border: 1px solid var(--border);
