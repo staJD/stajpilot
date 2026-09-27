@@ -37,6 +37,18 @@
     <p>I have now identified the cause and reduced the instability seen with some cables.</p>
     <p>Even so, it is not possible to prevent every cable-related error.</p>
     <p>I have done my best so that every guitar player can use this app reliably.</p>
+
+    <figure>
+      <img src="../assets/images/ios-usb-transaction-error-log.webp" width="1846" height="876" loading="lazy"
+           alt="iOS system log lines repeating: AppleUSBIORequest::complete: device 1 (Profiler) endpoint 0x83: status 0xe00002ed (transaction error): 0 bytes">
+      <figcaption>iOS system log from an iPhone connected to the Profiler: the USB host repeatedly reports transaction errors on the Profiler's input endpoint (0x83), with 0 bytes transferred.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="../assets/images/ios-midi-wrench-profiler.webp" width="1532" height="922" loading="lazy"
+           alt="MIDI Wrench app showing the Profiler in its CoreMIDI device list and a stream of incoming SysEx messages">
+      <figcaption>The same connection viewed in MIDI Wrench, a third-party CoreMIDI monitor app.</figcaption>
+    </figure>
   </section>
 
   <h1>StajPilot for iPhone &amp; iPad</h1>

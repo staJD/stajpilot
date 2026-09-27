@@ -302,6 +302,15 @@ ol.steps li::before {
 }
 .prologue p { font-size: 15px; line-height: 1.75; color: var(--ink-dim); margin-bottom: 10px; }
 .prologue p:first-of-type { color: var(--ink); font-weight: 700; }
+.prologue figure { margin: 24px 0 0; }
+.prologue figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.prologue figcaption { font-size: 13px; line-height: 1.6; color: var(--ink-faint); margin-top: 8px; }
 
 /* ---------- support contact block ---------- */
 .contact-block {
