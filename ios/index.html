@@ -1,120 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>StajPilot for iPhone & iPad — Setup &amp; Support</title>
-<meta name="description" content="How to connect StajPilot to a KEMPER PROFILER Player over USB MIDI on iPhone and iPad, plus troubleshooting.">
-<link rel="stylesheet" href="../assets/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StajPilot for iPhone &amp; iPad | USB MIDI Controller</title>
+  <meta name="description" content="A stage-ready USB MIDI controller for the KEMPER PROFILER Player. Explore StajPilot for iPhone and iPad, connection guidance, and the testing behind it.">
+  <meta property="og:title" content="StajPilot for iPhone &amp; iPad">
+  <meta property="og:description" content="Your rigs, effects and controls. A wired USB MIDI controller for the KEMPER PROFILER Player.">
+  <meta property="og:image" content="https://stajd.github.io/stajpilot/assets/images/ios-main-controller.png">
+  <meta property="og:url" content="https://stajd.github.io/stajpilot/ios/">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://stajd.github.io/stajpilot/ios/">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="./ios.css">
+  <script src="./ios.js" defer></script>
 </head>
-<body>
-
-<header class="site-header">
-  <div class="header-inner">
-    <div class="wordmark">Staj<span class="pilot">Pilot</span></div>
-    <nav class="site-nav" aria-label="Primary">
-      <a href="../index.html">Home</a>
-      <a href="../ios/index.html" aria-current="page">iPhone &amp; iPad</a>
-      <a href="../android/index.html">Android</a>
-      <a href="../support/index.html">Support</a>
-      <a href="../privacy/index.html">Privacy</a>
-    </nav>
-  </div>
-</header>
-
-<main>
-  <section class="prologue" aria-labelledby="prologue-title">
-    <span class="lang-label" id="prologue-title">Prologue</span>
-    <p>I'm a guitar player.</p>
-    <p>While using the KEMPER PROFILER, I was deeply frustrated that I had to control 625 rigs without a display.</p>
-    <p>I simply built this to make things less inconvenient for myself.</p>
-    <p>Later, I released that work publicly as firmware, supported only by donations.</p>
-    <p>After that, I went on to develop StajPilot for iOS and Android to make it even more accessible.</p>
-    <p>The iOS version is far more sensitive to cables and connectors. This is an area StajPilot cannot control.</p>
-    <p>I tested about 30 cables and a range of OTG connectors. It would be great if every cable worked properly, but that was not the case. That is not a problem on the app's side.</p>
-    <p>Of the cables I tested, every one except a single cable had worked without any trouble on Android and on the hardware version of StajPilot.</p>
-    <p>The official release was delayed while I tracked down why some cables fail to connect or drop MIDI messages.</p>
-    <p>I have now identified the cause and reduced the instability seen with some cables.</p>
-    <p>Even so, it is not possible to prevent every cable-related error.</p>
-    <p>I have done my best so that every guitar player can use this app reliably.</p>
-
-    <figure>
-      <img src="../assets/images/ios-usb-transaction-error-log.webp" width="1846" height="876" loading="lazy"
-           alt="iOS system log lines repeating: AppleUSBIORequest::complete: device 1 (Profiler) endpoint 0x83: status 0xe00002ed (transaction error): 0 bytes">
-      <figcaption>iOS system log from an iPhone connected to the Profiler: the USB host repeatedly reports transaction errors on the Profiler's input endpoint (0x83), with 0 bytes transferred.</figcaption>
-    </figure>
-
-    <figure>
-      <img src="../assets/images/ios-midi-wrench-profiler.webp" width="1532" height="922" loading="lazy"
-           alt="MIDI Wrench app showing the Profiler in its CoreMIDI device list and a stream of incoming SysEx messages">
-      <figcaption>The same connection viewed in MIDI Wrench, a third-party CoreMIDI monitor app.</figcaption>
-    </figure>
-  </section>
-
-  <h1>StajPilot for iPhone &amp; iPad</h1>
-  <p class="lede">Connect over wired USB MIDI to your KEMPER PROFILER Player. No account, no internet connection, no pairing.</p>
-
-  <h2>How to connect</h2>
-  <ol class="steps">
-    <li>Get a USB cable that supports data (not a charge-only cable).</li>
-    <li>Connect your iPhone or iPad to the USB-B port on the KEMPER PROFILER Player.</li>
-    <li>Open StajPilot.</li>
-    <li>Once MIDI data is received, the app switches from the waiting screen to the main display automatically.</li>
-  </ol>
-
-  <h2>About OTG / USB Host adapters</h2>
-  <ul>
-    <li>A compatible USB Host or OTG adapter is recommended — it helps the device recognize its USB role correctly and improves connection reliability.</li>
-    <li>Charge-only cables will not work — the cable must support data.</li>
-    <li>If USB role detection behaves differently depending on cable orientation or the order things are plugged in, use an OTG adapter instead of a direct cable.</li>
-  </ul>
-
-  <h2>Troubleshooting</h2>
-
-  <h3>Stuck on the "Waiting for Device" screen</h3>
-  <p>Confirm the cable supports data, confirm it's connected to the Player's USB-B port, and confirm the Player is powered on. Try unplugging and reconnecting the cable after fully closing StajPilot (see below).</p>
-
-  <h3>Shows "USB Connected" but no MIDI info appears</h3>
-  <p>This usually means a data connection exists but the Player hasn't started sending MIDI data yet. Check the Player's firmware version, and try reconnecting the cable.</p>
-
-  <h3>Reopening the app from the background doesn't reconnect</h3>
-  <p>Fully close StajPilot from the app switcher, disconnect the USB cable, then reconnect it and reopen the app.</p>
-
-  <h3>Another MIDI app is holding the USB connection</h3>
-  <p>Close any other app that may be using MIDI over USB, then reopen StajPilot.</p>
-
-  <h3>The cable or adapter isn't recognized</h3>
-  <p>Try a different data-capable USB cable, or add a USB Host/OTG adapter between the cable and the device.</p>
-
-  <h3>General reset steps</h3>
-  <ol class="steps">
-    <li>Close StajPilot completely (remove it from the app switcher).</li>
-    <li>Disconnect the USB cable from either end.</li>
-    <li>Confirm the KEMPER PROFILER Player is powered on and its firmware is up to date.</li>
-    <li>Reconnect the USB cable.</li>
-    <li>Reopen StajPilot.</li>
-  </ol>
-
-  <div class="notice">
-    <p>Still stuck? Contact <a href="../support/index.html">Support</a> with your device model, iOS/iPadOS version, Player firmware version, and the cable/adapter you're using.</p>
-  </div>
-
-  <div class="legal">
-    <p>StajPilot is an independent third-party application and is not affiliated with or endorsed by Kemper GmbH.</p>
-    <p>Compatibility and proper operation with the KEMPER PROFILER Player are not guaranteed. Changes to device hardware, firmware, communication protocols, or operating systems may affect, limit, or discontinue some or all functionality.</p>
-    <p>KEMPER and PROFILER are trademarks of Kemper GmbH. All other trademarks belong to their respective owners.</p>
-  </div>
-</main>
-
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div>StajPilot &copy; 2026</div>
-    <div class="footer-links">
-      <a href="../privacy/index.html">Privacy</a>
-      <a href="mailto:sk5054@hotmail.com">sk5054@hotmail.com</a>
+<body class="ios-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="StajPilot home"><img src="../assets/images/stajpilot-wordmark.png" width="458" height="108" alt="StajPilot"></a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="../index.html">Home</a><a href="./index.html" aria-current="page">iPhone &amp; iPad</a><a href="../android/index.html">Android</a><a href="../support/index.html">Support</a><a href="../privacy/index.html">Privacy</a>
+      </nav>
     </div>
-  </div>
-</footer>
+  </header>
+  <main id="main">
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">iPhone &amp; iPad / USB MIDI</p>
+      <h1 id="page-title">StajPilot for iPhone &amp; iPad</h1>
+      <p class="intro-copy">A stage-ready MIDI controller and performance display for the <strong>KEMPER PROFILER Player.</strong></p>
+      <div class="intro-actions"><a class="download-link" href="https://apps.apple.com/app/stajpilot/id6813749166">Get StajPilot on the App Store <span aria-hidden="true">&rarr;</span></a><a class="quiet-link" href="#connect">Connection guide <span aria-hidden="true">&darr;</span></a></div>
+      <p class="launch-note">Available at an introductory launch price. Check the App Store for your local price.</p>
+      <figure class="main-screen"><img src="../assets/images/ios-main-controller.png" width="2778" height="1284" fetchpriority="high" alt="StajPilot's landscape controller showing eight effect blocks, detailed effect names, Fixed FX, rig information, gain, tempo and five slots"><figcaption>Your rig, effects and essential controls, together on one landscape display.</figcaption></figure>
+      <ul class="essentials" aria-label="App essentials"><li>Wired USB MIDI</li><li>No account</li><li>No subscription</li><li>No internet needed to use the app</li></ul>
+    </section>
+    <nav class="section-nav" aria-label="On this page"><a href="#features">Features</a><a href="#connect">Connect</a><a href="#troubleshooting">Troubleshooting</a><a href="#testing">Behind the connection</a></nav>
 
+    <section class="page-section" id="features" aria-labelledby="features-title">
+      <div class="section-heading"><p class="eyebrow">On stage</p><h2 id="features-title">See your rig. Stay in control.</h2></div>
+      <div class="feature-columns">
+        <div><h3>Effects, with their actual names</h3><p>See detailed effect names and the live on/off status of eight rig FX blocks. Touch a block to control it. Fixed FX have their own status display and controls, with Touch and Always modes.</p><h3>Rigs and performance controls</h3><p>Five slot controls, bank navigation, rig names, author and amplifier names, gain and tempo information. Tap Tempo and Pedal Morph display keep essential performance information close at hand.</p></div>
+        <div><h3>Two ways to tune</h3><p>Choose a Needle or Strobe tuner display. Open the tuner by double-tapping the rig-name area.</p><h3>Your own Song Mode</h3><p>A StajPilot feature for organizing custom song, slot and sub names. Your Song setup is stored on your device and retained through normal app updates. Deleting the app may remove that data.</p></div>
+      </div>
+      <div class="screen-gallery"><figure><img src="../assets/images/ios-tuner.png" width="2778" height="1284" loading="lazy" alt="The Needle tuner display in StajPilot"><figcaption>Needle tuner</figcaption></figure><figure><img src="../assets/images/ios-song-editor.png" width="2778" height="1284" loading="lazy" alt="StajPilot Song editor with a song name and five slot name and subname entries"><figcaption>Song Mode: names that make sense to you</figcaption></figure></div>
+      <div class="streaming-note"><h3>Streaming first</h3><p>Most display information uses real-time MIDI streaming, and many supported controls use two-way MIDI communication. StajPilot does not use continuous millisecond-interval polling to imitate real-time streaming. Features that require periodic polling remain disabled by default and are enabled only when needed, avoiding unnecessary load on the Player.</p></div>
+      <p class="demo-note"><strong>Explore before connecting.</strong> Tap DEMO at the bottom-right of the waiting screen to explore the interface without hardware. Demo Mode does not send MIDI commands.</p>
+    </section>
+
+    <section class="page-section" id="connect" aria-labelledby="connect-title">
+      <div class="section-heading"><p class="eyebrow">Getting started</p><h2 id="connect-title">A direct connection to your Player.</h2></div>
+      <p class="section-intro">Use the Player's <strong>USB-B port</strong>, a short data-capable USB cable, and an adapter appropriate for your iPhone or iPad.</p>
+      <ol class="connection-steps">
+        <li><span class="step-number" aria-hidden="true">01</span><div><h3>Power on the Player</h3><p>Make sure your KEMPER PROFILER Player is powered on.</p></div></li>
+        <li><span class="step-number" aria-hidden="true">02</span><div><h3>Make the USB connection</h3><p>Connect your iPhone or iPad to the Player's USB-B port. A charge-only cable will not work.</p></div></li>
+        <li><span class="step-number" aria-hidden="true">03</span><div><h3>Open StajPilot</h3><p>The waiting screen changes to the main display once MIDI communication begins. Bluetooth pairing is not required; this iOS version uses wired USB MIDI.</p></div></li>
+      </ol>
+      <div class="connection-types"><div><h3>Lightning iPhone or iPad</h3><p>Use a compatible Lightning USB camera/host adapter and a USB data cable to the Player. If you already use an appropriate Apple camera adapter, an additional OTG adapter is not automatically required.</p></div><div><h3>USB-C iPhone or iPad</h3><p>Use a compatible USB-C data connection. A suitable USB Host/OTG adapter may improve connection compatibility when a direct connection behaves inconsistently.</p></div></div>
+      <aside class="cable-guidance" aria-labelledby="cable-title"><p class="eyebrow">Important / Cable &amp; adapter quality</p><h3 id="cable-title">Choose the whole connection carefully.</h3><p>We strongly recommend a <strong>short, high-quality USB data cable</strong> and a <strong>reputable, compatible adapter</strong>. The quality of an OTG or camera adapter matters just as much as the cable. An adapter alone does not guarantee a stable connection.</p><p>Connector fit, plug orientation and connection order can affect recognition or data transfer with some combinations. Insert connectors firmly and avoid tension or sideways pressure on the plugs.</p><p>A cable that works with another device may behave differently on iPhone or iPad. If information is missing or MIDI stops arriving, test another cable and adapter combination.</p><a href="#testing">Read about our connection testing <span aria-hidden="true">&rarr;</span></a></aside>
+    </section>
+
+    <section class="page-section" id="troubleshooting" aria-labelledby="troubleshooting-title">
+      <div class="section-heading"><p class="eyebrow">Connection help</p><h2 id="troubleshooting-title">Start with what iOS can see.</h2></div>
+      <p class="section-intro">A MIDI monitor such as <strong>MIDI Wrench</strong> can help distinguish device recognition from actual MIDI reception.</p>
+      <div class="recognition-check"><h3>Does “Profiler” appear in the MIDI device list?</h3><p>If not, iOS has not exposed the Player as a MIDI device. StajPilot cannot communicate with a device that the operating system has not made available. Check the cable, adapter, Player power and physical connection first.</p><p>If Profiler does appear, check whether new MIDI messages arrive. A listed device does not, on its own, guarantee that every message is being received.</p></div>
+      <div class="faq-list">
+        <details><summary>Stuck on “Waiting for Device”</summary><div class="faq-answer"><p>Confirm the Player is on, the cable supports data, and you are connected to the Player's USB-B port. Check for Profiler in a MIDI monitor. If it is absent, try a different short data cable and compatible adapter.</p></div></details>
+        <details><summary>“USB Connected” appears, but information does not</summary><div class="faq-answer"><p>Connection detection is not confirmation of active MIDI streaming or complete data reception. Check for new messages in a MIDI monitor, then reconnect and try another cable/adapter combination if necessary.</p></div></details>
+        <details><summary>Some rig or effect information is missing</summary><div class="faq-answer"><p>A partial display does not prove that the whole connection is working correctly. Check incoming MIDI, connector fit and cable strain. Try a different cable and adapter, and note which information is missing when contacting support.</p></div></details>
+        <details><summary>The bank and slot show “---”</summary><div class="faq-answer"><p>The current bank/slot number has not been established. StajPilot avoids presenting an unconfirmed number as current. This does not, by itself, mean all MIDI communication has stopped. The app can still display received rig/effect information, and slot controls remain available.</p></div></details>
+        <details><summary>Reconnection or returning to the app fails</summary><div class="faq-answer"><p>Close StajPilot fully, disconnect the USB connection, confirm the Player is on, reconnect, then reopen the app. If the behavior depends on plug orientation or connection order, test a different compatible host adapter. Record the exact sequence if the problem persists.</p></div></details>
+      </div>
+      <div class="support-row"><div><h3>Still need a hand?</h3><p>Send your device model, iOS/iPadOS version, Player firmware, cable and adapter details, and the steps that reproduce the issue.</p></div><a class="download-link" href="../support/index.html">Contact support <span aria-hidden="true">&rarr;</span></a></div>
+    </section>
+
+    <section class="page-section" id="testing" aria-labelledby="testing-title">
+      <div class="section-heading"><p class="eyebrow">Behind the connection</p><h2 id="testing-title">Tested beyond the app's own screen.</h2></div>
+      <div class="testing-stats" aria-label="Scope of testing"><div><strong>~30</strong><span>USB cables compared</span></div><div><strong>iPhone + iPad</strong><span>Physical-device testing</span></div><div><strong>USB + MIDI</strong><span>System and message-level checks</span></div></div>
+      <div class="story-copy"><p>As a guitarist, I wanted StajPilot to be something I could trust on stage. That meant looking beyond whether the app connected once.</p><p>I tested around 30 USB cables and several adapter combinations, repeatedly checking connections, reconnections, returning to the app and changing rigs. I also compared results with Android devices and the hardware version of StajPilot. The same connection setup did not always behave the same way across devices.</p><p>The investigation went beyond StajPilot's own logs. I used MIDI Wrench to inspect device recognition and incoming MIDI messages, and Apple Console to examine system-level USB errors involving the Profiler. I also traced incoming MIDI through the app's native input, message handling and display updates.</p><p>This work informed improvements to MIDI input and initial connection/reconnection handling. Rather than assuming that a partial display meant an app error, I checked where the information actually stopped arriving.</p></div>
+      <aside class="usb-explanation" aria-labelledby="usb-errors-title"><p class="eyebrow">What we confirmed</p><h3 id="usb-errors-title">The recorded errors are in USB transfer, not StajPilot.</h3><p>In the cable and connector cases documented below, Apple Console recorded failures in iOS's USB transfer system. These are <strong>not errors generated by StajPilot</strong>. The failed requests report <strong>0 bytes transferred</strong>: StajPilot cannot display MIDI information that has not been delivered to the app.</p><p>This investigation identified a connection-level explanation for missing or interrupted MIDI data in those tests. It is why the connection guidance focuses on the cable, adapter and physical connector fit, rather than treating the symptoms as a StajPilot display error.</p><p>App updates can improve MIDI processing and connection handling. They cannot repair a faulty physical connection or make an incompatible cable or adapter work reliably.</p></aside>
+      <div class="evidence-grid">
+        <figure class="evidence-figure"><div class="evidence-image midi-evidence"><img src="../assets/images/ios-midi-wrench-profiler.webp" width="1532" height="922" loading="lazy" alt="MIDI Wrench lists Profiler as a CoreMIDI device and shows incoming MIDI events. Unrelated personal device names are covered."><span class="device-name-cover" aria-hidden="true"></span></div><figcaption><strong>Device recognition &amp; incoming MIDI</strong>MIDI Wrench was used to inspect MIDI independently of StajPilot. Profiler appears in the device list; the event area shows received messages.</figcaption><button class="image-zoom" type="button" data-enlarge>Enlarge MIDI monitor image <span aria-hidden="true">&nearr;</span></button></figure>
+        <figure class="evidence-figure"><div class="evidence-image"><img src="../assets/images/ios-usb-transaction-error-log.webp" width="1846" height="876" loading="lazy" alt="AppleUSBIORequest log entries for Profiler endpoint 0x83 report status 0xe00002ed, transaction error, with 0 bytes transferred"></div><figcaption><strong>System-level USB transfer errors</strong>Apple Console recorded repeated transaction errors involving Profiler. The failed USB requests shown report 0 bytes transferred.</figcaption><button class="image-zoom" type="button" data-enlarge>Enlarge USB log image <span aria-hidden="true">&nearr;</span></button></figure>
+      </div>
+      <p class="evidence-note">These images document tools used during the investigation, not a synchronized capture. Cable and adapter compatibility can still vary between devices.</p>
+      <details class="technical-note"><summary>Technical detail: the USB log</summary><div class="faq-answer"><p>The captured entries identify <code>Profiler@00100000</code>, endpoint <code>0x83</code>, and status <code>0xe00002ed (transaction error)</code>. The byte count applies to the failed requests shown. The log records a failed USB transfer; it does not identify the exact electrical cause.</p></div></details>
+      <div class="origin-story"><h3>Built by a guitarist, for the stage.</h3><p>StajPilot began with a personal frustration: navigating hundreds of rigs without a display. I first built the hardware solution for myself and later shared the firmware, supported by donations. The iOS and Android apps grew from the same idea: make essential rig information and controls more accessible to other guitar players.</p></div>
+    </section>
+
+    <section class="page-section download-section" id="download" aria-labelledby="download-title"><div><p class="eyebrow">Available now</p><h2 id="download-title">StajPilot for iPhone &amp; iPad</h2><p>Available at an introductory launch price.</p><a class="download-link" href="https://apps.apple.com/app/stajpilot/id6813749166">Get StajPilot on the App Store <span aria-hidden="true">&rarr;</span></a><p class="store-address"><a href="https://apps.apple.com/app/stajpilot/id6813749166">apps.apple.com/app/stajpilot/id6813749166</a></p></div><figure class="store-qr"><img src="../assets/images/ios-app-store-qr.png" width="420" height="420" loading="lazy" alt="QR code linking to StajPilot on the App Store"><figcaption>Open the App Store on your device</figcaption></figure></section>
+    <section class="legal" aria-label="Compatibility and trademark notice"><p>StajPilot is an independent third-party application and is not affiliated with or endorsed by Kemper GmbH.</p><p>Compatibility and proper operation with the KEMPER PROFILER Player are not guaranteed. Changes to device hardware, firmware, communication protocols, or operating systems may affect, limit, or discontinue some or all functionality.</p><p>KEMPER and PROFILER are trademarks of Kemper GmbH. All other trademarks belong to their respective owners.</p></section>
+  </main>
+  <dialog class="image-dialog" aria-labelledby="image-dialog-title"><div class="dialog-toolbar"><h2 id="image-dialog-title">Connection testing</h2><button type="button" data-close>Close <span aria-hidden="true">&times;</span></button></div><div class="dialog-content"></div></dialog>
+  <footer class="site-footer"><div class="footer-inner"><div>StajPilot &copy; 2026</div><div class="footer-links"><a href="../privacy/index.html">Privacy</a><a href="mailto:sk5054@hotmail.com">sk5054@hotmail.com</a></div></div></footer>
 </body>
 </html>
