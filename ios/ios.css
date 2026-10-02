@@ -44,6 +44,11 @@
 .streaming-note { padding: 28px 0; margin-top: 30px; border-top: 1px solid var(--border); }
 .streaming-note p { max-width: 890px; margin-bottom: 0; }
 .ios-page .demo-note { margin: 0; font-size: 14px; }
+.connection-diagram { margin: 4px 0 30px; }
+.connection-diagram a { display: block; }
+.connection-diagram a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.connection-diagram img { display: block; width: 100%; height: auto; border: 1px solid var(--border); }
+.connection-diagram figcaption { color: var(--ink-dim); margin-top: 10px; font-size: 13px; line-height: 1.5; }
 .version-note { padding: 20px 0; margin-bottom: 12px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .version-note p { max-width: 880px; }
 .version-note p:last-child { margin-bottom: 0; }
