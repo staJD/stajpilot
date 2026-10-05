@@ -12,6 +12,8 @@ test('Unicode song and slot text round-trips without changing amp image IDs', ()
     format: 'stajpilot-songs', version: 1, songs: [original],
   });
   assert.deepEqual(model.parseDocument(exported), banks);
+  banks[2].slots[0].name = 'Outro';
+  assert.equal(model.exportDocument(banks).songs[0].slots[0].ampImage, 42);
 });
 
 test('empty banks are not exported', () => {

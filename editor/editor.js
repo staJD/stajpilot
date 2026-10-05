@@ -151,25 +151,18 @@
       number.className = 'slot-number';
       number.textContent = String(index + 1).padStart(2, '0');
       row.append(number);
-      for (const [field, type] of [['name', 'text'], ['subName', 'text'], ['ampImage', 'number']]) {
+      for (const field of ['name', 'subName']) {
         const label = document.createElement('label');
         const input = document.createElement('input');
-        input.type = type;
+        input.type = 'text';
         input.dataset.slot = String(index);
         input.dataset.field = field;
-        input.setAttribute('aria-label', `Slot ${index + 1} ${field === 'subName' ? 'sub name' : field === 'ampImage' ? 'amp image' : 'name'}`);
-        if (type === 'number') {
-          input.min = '1';
-          input.max = '100';
-          input.step = '1';
-          input.inputMode = 'numeric';
-        } else {
-          const limit = field === 'name' ? model.SLOT_NAME_LIMIT : model.SLOT_SUBNAME_LIMIT;
-          input.autocomplete = 'off';
-          input.placeholder = field === 'name' ? 'Name (25)' : 'Sub (13)';
-          input.title = `Maximum ${limit} characters`;
-          input.setAttribute('aria-invalid', String(model.graphemeLength(slot[field]) > limit));
-        }
+        input.setAttribute('aria-label', `Slot ${index + 1} ${field === 'subName' ? 'sub name' : 'name'}`);
+        const limit = field === 'name' ? model.SLOT_NAME_LIMIT : model.SLOT_SUBNAME_LIMIT;
+        input.autocomplete = 'off';
+        input.placeholder = field === 'name' ? 'Name (25)' : 'Sub (13)';
+        input.title = `Maximum ${limit} characters`;
+        input.setAttribute('aria-invalid', String(model.graphemeLength(slot[field]) > limit));
         input.value = String(slot[field]);
         label.append(input);
         row.append(label);
@@ -419,18 +412,6 @@
     if (!event.isComposing) commitSlotText(event.target);
   });
   elements.slotRows.addEventListener('compositionend', (event) => commitSlotText(event.target));
-  elements.slotRows.addEventListener('change', (event) => {
-    const input = event.target;
-    if (!input.matches('input[type="number"]')) return;
-    const value = Number(input.value);
-    if (!Number.isInteger(value) || value < 1 || value > 100) {
-      input.value = String((banks[selectedBank - 1] || model.emptySong(selectedBank))
-        .slots[Number(input.dataset.slot)].ampImage);
-      return;
-    }
-    captureEdit(input);
-    editField('ampImage', value, Number(input.dataset.slot));
-  });
   window.addEventListener('beforeunload', (event) => {
     if (countSongs() && documentText() !== lastExported) event.preventDefault();
   });
