@@ -19,6 +19,7 @@
 .skip-link:focus { top: 8px; }
 .ios-page .eyebrow { margin: 0 0 12px; color: var(--accent-link); font-size: 12px; font-weight: 700; }
 .intro-copy { max-width: 750px; font-size: 19px; line-height: 1.5; margin-bottom: 20px; }
+.ios-page .release-notice { max-width: 760px; border-left: 3px solid #37cfb4; padding-left: 14px; margin: 0 0 22px; font-size: 15px; line-height: 1.6; }
 .intro-actions { display: flex; flex-wrap: wrap; gap: 14px 26px; align-items: center; }
 .download-link { display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; background: #fff; color: #111 !important; padding: 12px 18px; font-size: 15px; font-weight: 750; border-radius: 4px; min-height: 46px; text-decoration: none !important; }
 .download-link:hover { background: #daeaff; }
@@ -43,6 +44,9 @@
 .screen-gallery figcaption { color: var(--ink-dim); margin-top: 10px; font-size: 13px; }
 .streaming-note { padding: 28px 0; margin-top: 30px; border-top: 1px solid var(--border); }
 .streaming-note p { max-width: 890px; margin-bottom: 0; }
+.platform-note { padding: 28px 0; border-top: 1px solid var(--border); }
+.platform-note p { max-width: 890px; }
+.platform-note p:last-child { margin-bottom: 0; }
 .ios-page .demo-note { margin: 0; font-size: 14px; }
 .connection-diagram { margin: 4px 0 30px; }
 .connection-diagram a { display: block; }
