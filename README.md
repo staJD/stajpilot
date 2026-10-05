@@ -1,8 +1,18 @@
 # StajPilot support site
 
 A static support site for StajPilot (iOS/iPadOS/Android), built for GitHub
-Pages. Plain HTML/CSS, no build step, no external fonts or CDNs, no
-analytics, no cookies, no forms.
+Pages. Plain HTML/CSS/JavaScript, no build step, no external fonts or CDNs,
+no analytics, no cookies, and no server-side forms.
+
+The Song Editor lives at `editor/index.html`. It keeps a local browser draft
+and can import/export a song-only JSON document. The current mobile builds do
+not yet import this file directly. No test song list is bundled with the site.
+
+Song files use `{ "format": "stajpilot-songs", "version": 1, "songs": [...] }`.
+Each song has a bank (1-125), songName, and exactly five slots with name,
+subName, and ampImage (1-100). The editor can also read a raw songs array or
+the existing controller-state JSON; it exports only song data. Run
+`node --test editor/model.test.cjs` to check the file model.
 
 ## 1. Create the GitHub repository
 
@@ -21,6 +31,10 @@ Keep the folder structure exactly as-is:
 ├── index.html
 ├── ios/index.html
 ├── android/index.html
+├── editor/index.html
+├── editor/editor.css
+├── editor/editor.js
+├── editor/model.js
 ├── privacy/index.html
 ├── support/index.html
 ├── assets/

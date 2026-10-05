@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101216">
+  <title>Song Editor | StajPilot</title>
+  <meta name="description" content="Edit and back up StajPilot song banks locally in your browser.">
+  <link rel="stylesheet" href="editor.css">
+  <script src="model.js" defer></script>
+  <script src="editor.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="../index.html" aria-label="StajPilot home">
+      <img src="../assets/images/stajpilot-wordmark.png" alt="StajPilot" width="153" height="36">
+    </a>
+    <span class="header-divider" aria-hidden="true"></span>
+    <span class="product-name">Song Editor</span>
+    <a class="site-link" href="../support/index.html">Support</a>
+  </header>
+
+  <main class="app-main">
+    <section class="page-toolbar" aria-label="Song library controls">
+      <div class="page-title">
+        <h1>Song library</h1>
+        <span id="song-count" class="count">0 / 125 banks</span>
+      </div>
+      <div class="toolbar-actions">
+        <button id="new-button" type="button" class="button secondary">New song</button>
+        <button id="clear-all-button" type="button" class="button secondary">New library</button>
+        <button id="import-button" type="button" class="button secondary">Import JSON</button>
+        <input id="import-file" type="file" accept=".json,application/json" hidden>
+        <button id="export-button" type="button" class="button primary">Export JSON</button>
+        <button id="undo-button" type="button" class="button icon-button" title="Undo last edit" aria-label="Undo last edit" disabled>↶</button>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <aside class="bank-pane" aria-label="Banks">
+        <div class="pane-header">
+          <label class="field-label" for="bank-search">BANKS</label>
+          <input id="bank-search" type="search" placeholder="Search banks or songs" autocomplete="off">
+          <div class="filter-group" role="group" aria-label="Bank filter">
+            <button id="filter-all" type="button" class="filter active" aria-pressed="true">All</button>
+            <button id="filter-filled" type="button" class="filter" aria-pressed="false">Filled</button>
+          </div>
+        </div>
+        <div id="bank-list" class="bank-list" role="listbox" aria-label="Song banks"></div>
+      </aside>
+
+      <section class="edit-pane" aria-labelledby="editor-title">
+        <div class="edit-heading">
+          <div>
+            <span class="field-label">SELECTED BANK</span>
+            <h2 id="editor-title">Bank <span id="selected-bank">001</span></h2>
+          </div>
+          <div class="song-actions">
+            <button id="move-button" type="button" class="button quiet">Move</button>
+            <button id="duplicate-button" type="button" class="button quiet">Duplicate</button>
+            <button id="clear-button" type="button" class="button danger">Clear</button>
+          </div>
+        </div>
+
+        <div class="song-field">
+          <label class="field-label" for="song-name">SONG NAME</label>
+          <input id="song-name" type="text" maxlength="200" placeholder="Song name" autocomplete="off">
+        </div>
+
+        <div class="slot-heading">
+          <h3>Slots</h3>
+          <span>5 per bank</span>
+        </div>
+        <div class="slot-table" role="group" aria-label="Five song slots">
+          <div class="slot-column-head" aria-hidden="true">
+            <span>SLOT</span><span>NAME</span><span>SUB NAME</span><span title="Amp image number, 1 to 100">AMP IMAGE</span>
+          </div>
+          <div id="slot-rows"></div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="editor-footer">
+      <span id="save-status" role="status">Saved in this browser</span>
+      <span>Files stay on your device. App file import is not available in current builds.</span>
+      <a href="../privacy/index.html">Privacy</a>
+    </footer>
+  </main>
+
+  <dialog id="action-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-content">
+      <h2 id="dialog-title"></h2>
+      <p id="dialog-message"></p>
+      <label id="target-label" class="field-label" for="target-bank" hidden>TARGET BANK</label>
+      <input id="target-bank" type="number" min="1" max="125" inputmode="numeric" hidden>
+      <div id="dialog-error" class="dialog-error" role="alert" hidden></div>
+      <div class="dialog-actions">
+        <button id="dialog-cancel" type="button" class="button secondary">Cancel</button>
+        <button id="dialog-confirm" type="button" class="button primary">Continue</button>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>
