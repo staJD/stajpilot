@@ -5,6 +5,24 @@
   const VERSION = 1;
   const BANK_COUNT = 125;
   const SLOT_COUNT = 5;
+  const SLOT_NAME_LIMIT = 25;
+  const SLOT_SUBNAME_LIMIT = 13;
+  const segmenter = typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function'
+    ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+
+  function graphemes(value) {
+    return segmenter
+      ? Array.from(segmenter.segment(value), (entry) => entry.segment)
+      : Array.from(value);
+  }
+
+  function graphemeLength(value) {
+    return graphemes(value).length;
+  }
+
+  function truncateGraphemes(value, limit) {
+    return graphemes(value).slice(0, limit).join('');
+  }
 
   function emptyBanks() {
     return Array(BANK_COUNT).fill(null);
@@ -27,7 +45,7 @@
     ));
   }
 
-  function normalizeSong(value) {
+  function normalizeSong(value, { allowLong = false } = {}) {
     if (!value || typeof value !== 'object' || Array.isArray(value)) {
       throw new Error('Every song must be an object.');
     }
@@ -45,6 +63,12 @@
           typeof slot.name !== 'string' || typeof slot.subName !== 'string') {
         throw new Error(`Bank ${value.bank}, slot ${index + 1}: invalid name.`);
       }
+      if (!allowLong && graphemeLength(slot.name) > SLOT_NAME_LIMIT) {
+        throw new Error(`Bank ${value.bank}, slot ${index + 1}: name exceeds ${SLOT_NAME_LIMIT} characters.`);
+      }
+      if (!allowLong && graphemeLength(slot.subName) > SLOT_SUBNAME_LIMIT) {
+        throw new Error(`Bank ${value.bank}, slot ${index + 1}: sub name exceeds ${SLOT_SUBNAME_LIMIT} characters.`);
+      }
       const ampImage = slot.ampImage === undefined ? 1 : slot.ampImage;
       if (!Number.isInteger(ampImage) || ampImage < 1 || ampImage > 100) {
         throw new Error(`Bank ${value.bank}, slot ${index + 1}: amp image must be 1-100.`);
@@ -54,7 +78,7 @@
     return { bank: value.bank, songName: value.songName, slots };
   }
 
-  function parseDocument(input) {
+  function parseDocument(input, { allowLong = false } = {}) {
     let songs;
     if (Array.isArray(input)) {
       songs = input;
@@ -73,7 +97,7 @@
     const banks = emptyBanks();
     const seen = new Set();
     for (const entry of songs) {
-      const song = normalizeSong(entry);
+      const song = normalizeSong(entry, { allowLong });
       if (seen.has(song.bank)) {
         throw new Error(`Bank ${song.bank} appears more than once.`);
       }
@@ -92,9 +116,21 @@
       version: VERSION,
       songs: banks.flatMap((song, index) => {
         if (!song || !isPopulated(song)) return [];
-        return [normalizeSong({ ...song, bank: index + 1 })];
+        return [normalizeSong({ ...song, bank: index + 1 }, { allowLong: true })];
       }),
     };
+  }
+
+  function firstLengthError(banks) {
+    for (const song of banks) {
+      if (!song) continue;
+      try {
+        normalizeSong(song);
+      } catch (error) {
+        return error.message;
+      }
+    }
+    return null;
   }
 
   function moveBank(banks, from, to) {
@@ -102,15 +138,16 @@
       throw new Error('Invalid bank number.');
     }
     if (!banks[from - 1]) throw new Error('The source bank is empty.');
-    const moved = banks.map((song) => song && normalizeSong(song));
+    const moved = banks.map((song) => song && normalizeSong(song, { allowLong: true }));
     moved.splice(to - 1, 0, moved.splice(from - 1, 1)[0]);
     moved.forEach((song, index) => { if (song) song.bank = index + 1; });
     return moved;
   }
 
   const api = {
-    BANK_COUNT, FORMAT, VERSION, emptyBanks, emptySong, isPopulated,
-    parseDocument, exportDocument, moveBank,
+    BANK_COUNT, FORMAT, VERSION, SLOT_NAME_LIMIT, SLOT_SUBNAME_LIMIT,
+    emptyBanks, emptySong, isPopulated, graphemeLength, truncateGraphemes,
+    parseDocument, exportDocument, firstLengthError, moveBank,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.StajPilotSongs = api;

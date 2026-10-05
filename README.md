@@ -10,7 +10,9 @@ not yet import this file directly. No test song list is bundled with the site.
 
 Song files use `{ "format": "stajpilot-songs", "version": 1, "songs": [...] }`.
 Each song has a bank (1-125), songName, and exactly five slots with name,
-subName, and ampImage (1-100). The editor can also read a raw songs array or
+subName, and ampImage (1-100). Slot names are limited to 25 grapheme clusters
+and sub names to 13, matching the app editor; song names have no fixed app
+limit. The editor can also read a raw songs array or
 the existing controller-state JSON; it exports only song data. Run
 `node --test editor/model.test.cjs` to check the file model.
 

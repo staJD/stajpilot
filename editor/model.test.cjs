@@ -56,3 +56,27 @@ test('moving across an empty bank does not duplicate or lose a song', () => {
     [1, 'Third'], [2, 'First'],
   ]);
 });
+
+test('slot limits match the app while song titles have no fixed limit', () => {
+  const song = model.emptySong(9);
+  song.songName = 'Long title '.repeat(30);
+  song.slots[0].name = 'N'.repeat(25);
+  song.slots[0].subName = 'S'.repeat(13);
+  assert.equal(model.parseDocument([song])[8].songName, song.songName);
+  assert.throws(() => model.parseDocument([{ ...song, slots: [
+    { ...song.slots[0], name: 'N'.repeat(26) }, ...song.slots.slice(1),
+  ] }]), /name exceeds 25/);
+  assert.throws(() => model.parseDocument([{ ...song, slots: [
+    { ...song.slots[0], subName: 'S'.repeat(14) }, ...song.slots.slice(1),
+  ] }]), /sub name exceeds 13/);
+  assert.equal(model.graphemeLength('👨‍👩‍👧‍👦'), 1);
+  assert.equal(model.truncateGraphemes('A👨‍👩‍👧‍👦B', 2), 'A👨‍👩‍👧‍👦');
+});
+
+test('a previously saved long draft can still be loaded and backed up', () => {
+  const song = model.emptySong(1);
+  song.slots[0].name = 'L'.repeat(26);
+  const draft = model.parseDocument([song], { allowLong: true });
+  assert.match(model.firstLengthError(draft), /name exceeds 25/);
+  assert.equal(model.exportDocument(draft).songs[0].slots[0].name.length, 26);
+});

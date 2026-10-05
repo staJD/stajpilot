@@ -40,7 +40,7 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const saved = JSON.parse(raw);
-      banks = model.parseDocument(saved.document);
+      banks = model.parseDocument(saved.document, { allowLong: true });
       selectedBank = Number.isInteger(saved.selectedBank) &&
         saved.selectedBank >= 1 && saved.selectedBank <= model.BANK_COUNT
         ? saved.selectedBank : 1;
@@ -64,10 +64,13 @@
   }
 
   function updateStatus() {
+    const lengthError = model.firstLengthError(banks);
     const unexported = countSongs() > 0 && documentText() !== lastExported;
-    elements.status.classList.toggle('warning', unexported || !storageAvailable);
+    elements.status.classList.toggle('warning', Boolean(lengthError) || unexported || !storageAvailable);
     elements.status.textContent = !storageAvailable
       ? 'Browser draft unavailable - export a JSON backup'
+      : lengthError
+        ? lengthError
       : unexported
         ? 'Unexported edits - saved in this browser'
         : 'Browser draft saved';
@@ -94,6 +97,7 @@
   }
 
   function renderBankList() {
+    const previousScroll = elements.list.scrollTop;
     const query = elements.search.value.trim().toLocaleLowerCase();
     const fragment = document.createDocumentFragment();
     for (let index = 0; index < model.BANK_COUNT; index++) {
@@ -121,12 +125,18 @@
       fragment.append(button);
     }
     elements.list.replaceChildren(fragment);
+    elements.list.scrollTop = previousScroll;
     if (!elements.list.children.length) {
       const empty = document.createElement('p');
       empty.className = 'bank-empty-search';
       empty.textContent = 'No matching banks';
       elements.list.append(empty);
     }
+  }
+
+  function revealSelectedBank() {
+    elements.list.querySelector(`button[data-bank="${selectedBank}"]`)
+      ?.scrollIntoView({ block: 'nearest' });
   }
 
   function renderEditor() {
@@ -154,9 +164,11 @@
           input.step = '1';
           input.inputMode = 'numeric';
         } else {
-          input.maxLength = 200;
+          const limit = field === 'name' ? model.SLOT_NAME_LIMIT : model.SLOT_SUBNAME_LIMIT;
           input.autocomplete = 'off';
-          input.placeholder = field === 'name' ? 'Name' : 'Sub name';
+          input.placeholder = field === 'name' ? 'Name (25)' : 'Sub (13)';
+          input.title = `Maximum ${limit} characters`;
+          input.setAttribute('aria-invalid', String(model.graphemeLength(slot[field]) > limit));
         }
         input.value = String(slot[field]);
         label.append(input);
@@ -175,6 +187,7 @@
     selectedBank = bank;
     renderEditor();
     renderBankList();
+    revealSelectedBank();
     persist();
   }
 
@@ -206,12 +219,22 @@
     setTimeout(() => URL.revokeObjectURL(url), 60_000);
   }
 
-  function exportSongs() {
+  function completeExport() {
     const date = new Date().toISOString().slice(0, 10);
     download(model.exportDocument(banks), `StajPilot_Songs_${date}.json`);
     lastExported = documentText();
     persist();
     updateStatus();
+  }
+
+  function exportSongs() {
+    const lengthError = model.firstLengthError(banks);
+    if (lengthError) {
+      showDialog({ kind: 'exportInvalid' }, 'Long slot text',
+        `${lengthError} You can still download a backup, but this file will not match the app's input limits.`, 'Export backup');
+      return;
+    }
+    completeExport();
   }
 
   function showDialog(action, title, message, confirmLabel, withTarget = false) {
@@ -261,7 +284,9 @@
       }
     }
 
-    if (action.kind === 'import' || action.kind === 'clearAll') {
+    if (action.kind === 'exportInvalid') {
+      completeExport();
+    } else if (action.kind === 'import' || action.kind === 'clearAll') {
       if (countSongs()) {
         const date = new Date().toISOString().slice(0, 10);
         download(model.exportDocument(banks), `StajPilot_Songs_Backup_${date}.json`);
@@ -291,16 +316,18 @@
     elements.dialog.close();
     renderEditor();
     afterChange();
+    revealSelectedBank();
   }
 
   function undo() {
     const previous = undoStack.pop();
     if (!previous) return;
     activeEdit = null;
-    banks = model.parseDocument(previous.document);
+    banks = model.parseDocument(previous.document, { allowLong: true });
     selectedBank = previous.selectedBank;
     renderEditor();
     afterChange();
+    revealSelectedBank();
   }
 
   elements.list.addEventListener('click', (event) => {
@@ -378,13 +405,20 @@
   elements.slotRows.addEventListener('focusout', (event) => {
     if (activeEdit === event.target) activeEdit = null;
   });
+  function commitSlotText(input) {
+    if (!input.matches('input[type="text"]')) return;
+    const limit = input.dataset.field === 'name'
+      ? model.SLOT_NAME_LIMIT : model.SLOT_SUBNAME_LIMIT;
+    const value = model.truncateGraphemes(input.value, limit);
+    if (input.value !== value) input.value = value;
+    input.setAttribute('aria-invalid', 'false');
+    captureEdit(input);
+    editField(input.dataset.field, value, Number(input.dataset.slot));
+  }
   elements.slotRows.addEventListener('input', (event) => {
-    const input = event.target;
-    if (input.matches('input[type="text"]')) {
-      captureEdit(input);
-      editField(input.dataset.field, input.value, Number(input.dataset.slot));
-    }
+    if (!event.isComposing) commitSlotText(event.target);
   });
+  elements.slotRows.addEventListener('compositionend', (event) => commitSlotText(event.target));
   elements.slotRows.addEventListener('change', (event) => {
     const input = event.target;
     if (!input.matches('input[type="number"]')) return;
