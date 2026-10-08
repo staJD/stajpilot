@@ -16,7 +16,7 @@
   const elements = {
     list: $('bank-list'), search: $('bank-search'), count: $('song-count'),
     selectedBank: $('selected-bank'), songName: $('song-name'),
-    slotRows: $('slot-rows'), status: $('save-status'), undo: $('undo-button'),
+    slotRows: $('slot-rows'), status: $('save-status'),
     dialog: $('action-dialog'), dialogTitle: $('dialog-title'),
     dialogMessage: $('dialog-message'), dialogError: $('dialog-error'),
     targetLabel: $('target-label'), targetBank: $('target-bank'),
@@ -33,11 +33,9 @@
   let rigAmpImages = null;
   let selectedBank = 1;
   let filter = 'all';
-  let undoStack = [];
   let lastExported = null;
   let storageAvailable = true;
   let pendingAction = null;
-  let activeEdit = null;
   let ampPickerSlot = null;
   let ampPickerIndex = 0;
   let pickerAmpOptions = AMP_OPTIONS;
@@ -104,19 +102,6 @@
         ? 'Unexported edits - saved in this browser'
         : 'Browser draft saved';
     elements.count.textContent = `${countSongs()} / ${model.BANK_COUNT} banks`;
-    elements.undo.disabled = undoStack.length === 0;
-  }
-
-  function pushUndo() {
-    undoStack.push({ document: model.exportLibrary(library()), selectedBank });
-    if (undoStack.length > 40) undoStack.shift();
-    elements.undo.disabled = false;
-  }
-
-  function captureEdit(input) {
-    if (activeEdit === input) return;
-    pushUndo();
-    activeEdit = input;
   }
 
   function afterChange() {
@@ -222,7 +207,6 @@
   }
 
   function selectBank(bank) {
-    activeEdit = null;
     selectedBank = bank;
     renderEditor();
     renderBankList();
@@ -310,7 +294,6 @@
     const nextImage = pickerAmpOptions[ampPickerIndex].id;
     const currentImage = slotAmpImages?.[position] || 0;
     if (nextImage !== currentImage) {
-      pushUndo();
       if (slotAmpImages === null) slotAmpImages = {};
       if (nextImage) slotAmpImages[position] = nextImage;
       else delete slotAmpImages[position];
@@ -417,7 +400,6 @@
     if (action.kind === 'export') {
       completeExport(action.contents);
     } else if (action.kind === 'import' || action.kind === 'clearAll') {
-      pushUndo();
       if (action.kind === 'import') {
         const keptExistingImages =
           (action.incoming.slotAmpImages === null && slotAmpImages !== null) ||
@@ -439,29 +421,15 @@
         dialogError(`Bank ${target} already has a song. Choose an empty bank.`);
         return;
       }
-      pushUndo();
       banks[target - 1] = cloneSong({ ...banks[selectedBank - 1], bank: target });
       slotAmpImages = model.copySlotImages(slotAmpImages, selectedBank, target);
       selectedBank = target;
     } else if (action.kind === 'clear') {
-      pushUndo();
       banks[selectedBank - 1] = null;
       slotAmpImages = model.clearSlotImages(slotAmpImages, selectedBank);
     }
     pendingAction = null;
     elements.dialog.close();
-    renderEditor();
-    afterChange();
-    revealSelectedBank();
-  }
-
-  function undo() {
-    const previous = undoStack.pop();
-    if (!previous) return;
-    activeEdit = null;
-    ({ banks, slotAmpImages, rigAmpImages } =
-      model.parseLibrary(previous.document, { allowLong: true }));
-    selectedBank = previous.selectedBank;
     renderEditor();
     afterChange();
     revealSelectedBank();
@@ -515,22 +483,16 @@
     elements.importFile.value = '';
   });
   $('export-button').addEventListener('click', exportSongs);
-  elements.undo.addEventListener('click', undo);
   $('duplicate-button').addEventListener('click', () => showDialog({ kind: 'duplicate' },
     'Duplicate song', 'Choose an empty destination bank.', 'Duplicate', true));
   $('clear-button').addEventListener('click', () => showDialog({ kind: 'clear' },
-    'Clear this bank?', `Bank ${selectedBank} will become empty. You can undo this action.`, 'Clear bank'));
+    'Clear this bank?', `Bank ${selectedBank} will become empty. Continue?`, 'Clear bank'));
   $('dialog-cancel').addEventListener('click', () => elements.dialog.close());
   elements.dialogConfirm.addEventListener('click', confirmAction);
   elements.dialog.addEventListener('close', () => { pendingAction = null; });
 
   $('song-name').addEventListener('input', () => {
-    captureEdit(elements.songName);
     editField('songName', elements.songName.value);
-  });
-  $('song-name').addEventListener('blur', () => { activeEdit = null; });
-  elements.slotRows.addEventListener('focusout', (event) => {
-    if (activeEdit === event.target) activeEdit = null;
   });
   elements.slotRows.addEventListener('click', (event) => {
     const button = event.target.closest('button[data-amp-slot]');
@@ -575,7 +537,6 @@
     const value = model.truncateGraphemes(input.value, limit);
     if (input.value !== value) input.value = value;
     input.setAttribute('aria-invalid', 'false');
-    captureEdit(input);
     editField(input.dataset.field, value, Number(input.dataset.slot));
   }
   elements.slotRows.addEventListener('input', (event) => {
