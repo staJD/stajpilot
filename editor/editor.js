@@ -3,6 +3,14 @@
 
   const model = window.StajPilotSongs;
   const STORAGE_KEY = 'stajpilot-song-editor-draft-v1';
+  const AMP_OPTIONS = [
+    { id: 0, name: 'NONE', image: null },
+    { id: 1, name: 'AURORA', image: 'amps/stajpilot_01_aurora.png' },
+    { id: 2, name: 'FORGE', image: 'amps/stajpilot_02_forge.png' },
+    { id: 3, name: 'VELVET', image: 'amps/stajpilot_03_velvet.png' },
+    { id: 4, name: 'VECTOR', image: 'amps/stajpilot_04_vector.png' },
+    { id: 5, name: 'ATELIER', image: 'amps/stajpilot_05_atelier_v2.png' },
+  ];
   const $ = (id) => document.getElementById(id);
   const elements = {
     list: $('bank-list'), search: $('bank-search'), count: $('song-count'),
@@ -12,9 +20,15 @@
     dialogMessage: $('dialog-message'), dialogError: $('dialog-error'),
     targetLabel: $('target-label'), targetBank: $('target-bank'),
     dialogConfirm: $('dialog-confirm'), importFile: $('import-file'),
+    ampDialog: $('amp-dialog'), ampPosition: $('amp-dialog-position'),
+    ampSourceNote: $('amp-source-note'),
+    ampStrip: $('amp-strip'), ampSelectedName: $('amp-selected-name'),
+    ampPrevious: $('amp-previous'), ampNext: $('amp-next'),
   };
 
   let banks = model.emptyBanks();
+  let slotAmpImages = null;
+  let rigAmpImages = null;
   let selectedBank = 1;
   let filter = 'all';
   let undoStack = [];
@@ -22,13 +36,25 @@
   let storageAvailable = true;
   let pendingAction = null;
   let activeEdit = null;
+  let ampPickerSlot = null;
+  let ampPickerIndex = 0;
+  let pickerAmpOptions = AMP_OPTIONS;
+  let ampScrollFrame = null;
 
-  function documentText(list = banks) {
-    return JSON.stringify(model.exportDocument(list));
+  function library() {
+    return { banks, slotAmpImages, rigAmpImages };
+  }
+
+  function documentText() {
+    return JSON.stringify(model.exportLibrary(library()));
   }
 
   function countSongs(list = banks) {
     return list.filter(model.isPopulated).length;
+  }
+
+  function hasLibraryData() {
+    return countSongs() > 0 || slotAmpImages !== null || rigAmpImages !== null;
   }
 
   function cloneSong(song) {
@@ -40,7 +66,8 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const saved = JSON.parse(raw);
-      banks = model.parseDocument(saved.document, { allowLong: true });
+      ({ banks, slotAmpImages, rigAmpImages } =
+        model.parseLibrary(saved.document, { allowLong: true }));
       selectedBank = Number.isInteger(saved.selectedBank) &&
         saved.selectedBank >= 1 && saved.selectedBank <= model.BANK_COUNT
         ? saved.selectedBank : 1;
@@ -55,7 +82,7 @@
     if (!storageAvailable) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        document: model.exportDocument(banks), selectedBank, lastExported,
+        document: model.exportLibrary(library()), selectedBank, lastExported,
       }));
     } catch (error) {
       storageAvailable = false;
@@ -65,7 +92,7 @@
 
   function updateStatus() {
     const lengthError = model.firstLengthError(banks);
-    const unexported = countSongs() > 0 && documentText() !== lastExported;
+    const unexported = hasLibraryData() && documentText() !== lastExported;
     elements.status.classList.toggle('warning', Boolean(lengthError) || unexported || !storageAvailable);
     elements.status.textContent = !storageAvailable
       ? 'Browser draft unavailable - export a JSON backup'
@@ -79,7 +106,7 @@
   }
 
   function pushUndo() {
-    undoStack.push({ document: model.exportDocument(banks), selectedBank });
+    undoStack.push({ document: model.exportLibrary(library()), selectedBank });
     if (undoStack.length > 40) undoStack.shift();
     elements.undo.disabled = false;
   }
@@ -167,6 +194,24 @@
         label.append(input);
         row.append(label);
       }
+      const imageId = slotAmpImages?.[model.slotPosition(selectedBank, index)] || 0;
+      const option = AMP_OPTIONS.find((entry) => entry.id === imageId);
+      const ampButton = document.createElement('button');
+      ampButton.type = 'button';
+      ampButton.className = 'amp-choose';
+      ampButton.dataset.ampSlot = String(index);
+      ampButton.setAttribute('aria-label', `Choose amp image for bank ${selectedBank}, slot ${index + 1}`);
+      if (option?.image) {
+        const preview = document.createElement('img');
+        preview.src = option.image;
+        preview.alt = '';
+        preview.loading = 'lazy';
+        ampButton.append(preview);
+      }
+      const ampName = document.createElement('span');
+      ampName.textContent = option?.name || (imageId ? `IMAGE ${imageId}` : 'NONE');
+      ampButton.append(ampName);
+      row.append(ampButton);
       fragment.append(row);
     });
     elements.slotRows.replaceChildren(fragment);
@@ -198,6 +243,83 @@
     $('clear-button').disabled = !populated;
   }
 
+  function buildAmpCarousel() {
+    const slides = pickerAmpOptions.map((option, index) => {
+      const slide = document.createElement('div');
+      slide.className = 'amp-slide';
+      slide.dataset.ampIndex = String(index);
+      slide.setAttribute('role', 'option');
+      slide.setAttribute('aria-label', option.name);
+      if (option.image) {
+        const image = document.createElement('img');
+        image.src = option.image;
+        image.alt = option.name;
+        image.loading = 'lazy';
+        slide.append(image);
+      } else {
+        const empty = document.createElement('span');
+        empty.className = 'amp-none';
+        empty.textContent = option.id ? option.name : 'NO IMAGE';
+        slide.append(empty);
+      }
+      return slide;
+    });
+    elements.ampStrip.replaceChildren(...slides);
+  }
+
+  function ampStep() {
+    const first = elements.ampStrip.firstElementChild;
+    if (!first) return 0;
+    const gap = Number.parseFloat(getComputedStyle(elements.ampStrip).columnGap) || 0;
+    return first.getBoundingClientRect().width + gap;
+  }
+
+  function updateAmpSelection(index) {
+    ampPickerIndex = Math.max(0, Math.min(index, pickerAmpOptions.length - 1));
+    const option = pickerAmpOptions[ampPickerIndex];
+    elements.ampSelectedName.textContent = option.id ? `${option.id}  ${option.name}` : 'NONE';
+    elements.ampPrevious.disabled = ampPickerIndex === 0;
+    elements.ampNext.disabled = ampPickerIndex === pickerAmpOptions.length - 1;
+    for (const [slideIndex, slide] of [...elements.ampStrip.children].entries()) {
+      slide.setAttribute('aria-selected', String(slideIndex === ampPickerIndex));
+    }
+  }
+
+  function scrollToAmp(index, behavior = 'smooth') {
+    updateAmpSelection(index);
+    elements.ampStrip.scrollTo({ left: ampPickerIndex * ampStep(), behavior });
+  }
+
+  function openAmpPicker(slotIndex) {
+    ampPickerSlot = slotIndex;
+    elements.ampSourceNote.hidden = slotAmpImages !== null;
+    const imageId = slotAmpImages?.[model.slotPosition(selectedBank, slotIndex)] || 0;
+    pickerAmpOptions = AMP_OPTIONS.some((option) => option.id === imageId)
+      ? AMP_OPTIONS
+      : [...AMP_OPTIONS, { id: imageId, name: `IMAGE ${imageId}`, image: null }];
+    buildAmpCarousel();
+    const index = pickerAmpOptions.findIndex((option) => option.id === imageId);
+    elements.ampPosition.textContent = `BANK ${String(selectedBank).padStart(3, '0')} · SLOT ${slotIndex + 1}`;
+    elements.ampDialog.showModal();
+    requestAnimationFrame(() => scrollToAmp(index, 'auto'));
+  }
+
+  function applyAmpSelection() {
+    if (ampPickerSlot === null) return;
+    const position = model.slotPosition(selectedBank, ampPickerSlot);
+    const nextImage = pickerAmpOptions[ampPickerIndex].id;
+    const currentImage = slotAmpImages?.[position] || 0;
+    if (nextImage !== currentImage) {
+      pushUndo();
+      if (slotAmpImages === null) slotAmpImages = {};
+      if (nextImage) slotAmpImages[position] = nextImage;
+      else delete slotAmpImages[position];
+      renderEditor();
+      afterChange();
+    }
+    elements.ampDialog.close();
+  }
+
   function download(data, filename) {
     const blob = new Blob([JSON.stringify(data, null, 2) + '\n'], {
       type: 'application/json;charset=utf-8',
@@ -214,7 +336,7 @@
 
   function completeExport() {
     const date = new Date().toISOString().slice(0, 10);
-    download(model.exportDocument(banks), `StajPilot_Songs_${date}.json`);
+    download(model.exportLibrary(library()), `StajPilot_Songs_${date}.json`);
     lastExported = documentText();
     persist();
     updateStatus();
@@ -255,9 +377,14 @@
       return;
     }
     try {
-      const incoming = model.parseDocument(JSON.parse(await file.text()));
+      const incoming = model.parseLibrary(JSON.parse(await file.text()));
+      const imageNote = incoming.slotAmpImages === null
+        ? 'This file has no slot image assignments; the current assignments will stay.'
+        : 'Slot image assignments from this file will replace the current assignments.';
       showDialog({ kind: 'import', incoming }, 'Replace song library?',
-        `${countSongs(incoming)} songs found. This replaces all 125 banks. Your current library will be downloaded as a backup first.`, 'Back up and replace');
+        `${countSongs(incoming.banks)} songs found. This replaces all 125 banks. ` +
+        `${imageNote} Your current songs and amp image assignments will be downloaded as a backup first.`,
+        'Back up and replace');
     } catch (error) {
       showDialog(null, 'Import failed', error.message, 'Close');
     }
@@ -280,18 +407,31 @@
     if (action.kind === 'exportInvalid') {
       completeExport();
     } else if (action.kind === 'import' || action.kind === 'clearAll') {
-      if (countSongs()) {
+      if (hasLibraryData()) {
         const date = new Date().toISOString().slice(0, 10);
-        download(model.exportDocument(banks), `StajPilot_Songs_Backup_${date}.json`);
+        download(model.exportLibrary(library()), `StajPilot_Songs_Backup_${date}.json`);
       }
       pushUndo();
-      banks = action.kind === 'import' ? action.incoming : model.emptyBanks();
+      if (action.kind === 'import') {
+        const keptExistingImages =
+          (action.incoming.slotAmpImages === null && slotAmpImages !== null) ||
+          (action.incoming.rigAmpImages === null && rigAmpImages !== null);
+        banks = action.incoming.banks;
+        slotAmpImages = action.incoming.slotAmpImages ?? slotAmpImages;
+        rigAmpImages = action.incoming.rigAmpImages ?? rigAmpImages;
+        lastExported = keptExistingImages ? null : documentText();
+      } else {
+        banks = model.emptyBanks();
+        slotAmpImages = {};
+        rigAmpImages = {};
+        lastExported = null;
+      }
       selectedBank = action.kind === 'import'
         ? banks.findIndex(model.isPopulated) + 1 || 1 : 1;
-      lastExported = action.kind === 'import' ? documentText() : null;
     } else if (action.kind === 'move') {
       pushUndo();
       banks = model.moveBank(banks, selectedBank, target);
+      slotAmpImages = model.moveSlotImages(slotAmpImages, selectedBank, target);
       selectedBank = target;
     } else if (action.kind === 'duplicate') {
       if (banks[target - 1]) {
@@ -300,10 +440,12 @@
       }
       pushUndo();
       banks[target - 1] = cloneSong({ ...banks[selectedBank - 1], bank: target });
+      slotAmpImages = model.copySlotImages(slotAmpImages, selectedBank, target);
       selectedBank = target;
     } else if (action.kind === 'clear') {
       pushUndo();
       banks[selectedBank - 1] = null;
+      slotAmpImages = model.clearSlotImages(slotAmpImages, selectedBank);
     }
     pendingAction = null;
     elements.dialog.close();
@@ -316,7 +458,8 @@
     const previous = undoStack.pop();
     if (!previous) return;
     activeEdit = null;
-    banks = model.parseDocument(previous.document, { allowLong: true });
+    ({ banks, slotAmpImages, rigAmpImages } =
+      model.parseLibrary(previous.document, { allowLong: true }));
     selectedBank = previous.selectedBank;
     renderEditor();
     afterChange();
@@ -361,16 +504,6 @@
       renderBankList();
     });
   }
-  $('new-button').addEventListener('click', () => {
-    let index = banks.findIndex((song, i) => i >= selectedBank - 1 && !song);
-    if (index < 0) index = banks.findIndex((song) => !song);
-    if (index < 0) {
-      showDialog(null, 'Library full', 'All 125 banks are occupied.', 'Close');
-      return;
-    }
-    selectBank(index + 1);
-    elements.songName.focus();
-  });
   $('clear-all-button').addEventListener('click', () => showDialog({ kind: 'clearAll' },
     'Create a new library?', 'The current library will be downloaded as a backup before all banks are cleared.', 'Back up and clear'));
   $('import-button').addEventListener('click', () => elements.importFile.click());
@@ -398,6 +531,42 @@
   elements.slotRows.addEventListener('focusout', (event) => {
     if (activeEdit === event.target) activeEdit = null;
   });
+  elements.slotRows.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-amp-slot]');
+    if (button) openAmpPicker(Number(button.dataset.ampSlot));
+  });
+  elements.ampStrip.addEventListener('click', (event) => {
+    const slide = event.target.closest('[data-amp-index]');
+    if (slide) scrollToAmp(Number(slide.dataset.ampIndex));
+  });
+  elements.ampStrip.addEventListener('scroll', () => {
+    if (ampScrollFrame !== null) return;
+    ampScrollFrame = requestAnimationFrame(() => {
+      ampScrollFrame = null;
+      const step = ampStep();
+      if (step) updateAmpSelection(Math.round(elements.ampStrip.scrollLeft / step));
+    });
+  });
+  elements.ampStrip.addEventListener('wheel', (event) => {
+    if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+      event.preventDefault();
+      elements.ampStrip.scrollLeft += event.deltaY;
+    }
+  }, { passive: false });
+  elements.ampPrevious.addEventListener('click', () => scrollToAmp(ampPickerIndex - 1));
+  elements.ampNext.addEventListener('click', () => scrollToAmp(ampPickerIndex + 1));
+  $('amp-select').addEventListener('click', applyAmpSelection);
+  $('amp-cancel').addEventListener('click', () => elements.ampDialog.close());
+  $('amp-dialog-close').addEventListener('click', () => elements.ampDialog.close());
+  elements.ampDialog.addEventListener('close', () => { ampPickerSlot = null; });
+  elements.ampDialog.addEventListener('keydown', (event) => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    scrollToAmp(ampPickerIndex + (event.key === 'ArrowRight' ? 1 : -1));
+  });
+  window.addEventListener('resize', () => {
+    if (elements.ampDialog.open) scrollToAmp(ampPickerIndex, 'auto');
+  });
   function commitSlotText(input) {
     if (!input.matches('input[type="text"]')) return;
     const limit = input.dataset.field === 'name'
@@ -413,7 +582,7 @@
   });
   elements.slotRows.addEventListener('compositionend', (event) => commitSlotText(event.target));
   window.addEventListener('beforeunload', (event) => {
-    if (countSongs() && documentText() !== lastExported) event.preventDefault();
+    if (hasLibraryData() && documentText() !== lastExported) event.preventDefault();
   });
   document.addEventListener('dragover', (event) => {
     if (event.dataTransfer && Array.from(event.dataTransfer.types).includes('Files')) {
@@ -426,6 +595,7 @@
     readImport(event.dataTransfer.files[0]);
   });
 
+  buildAmpCarousel();
   loadDraft();
   renderEditor();
   renderBankList();

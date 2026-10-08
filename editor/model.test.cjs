@@ -82,3 +82,54 @@ test('a previously saved long draft can still be loaded and backed up', () => {
   assert.match(model.firstLengthError(draft), /name exceeds 25/);
   assert.equal(model.exportDocument(draft).songs[0].slots[0].name.length, 26);
 });
+
+test('iPhone backup keeps position-based and Rig image assignments', () => {
+  const song = model.emptySong(2);
+  song.songName = 'Stage';
+  song.slots[0].ampImage = 42;
+  const backup = {
+    format: 'stajpilot-songs', version: 1, songs: [song],
+    slotAmpImages: { '6': 3, '625': 42 },
+    rigAmpImages: { 'My Rig': 5 },
+  };
+  const library = model.parseLibrary(backup);
+  assert.equal(model.slotPosition(2, 0), 6);
+  assert.equal(model.slotPosition(125, 4), 625);
+  assert.deepEqual(model.exportLibrary(library), backup);
+});
+
+test('older song-only files do not erase app image assignments', () => {
+  const song = model.emptySong(1);
+  song.songName = 'Old file';
+  const library = model.parseLibrary({
+    format: 'stajpilot-songs', version: 1, songs: [song],
+  });
+  assert.equal(library.slotAmpImages, null);
+  assert.equal(library.rigAmpImages, null);
+  assert.deepEqual(model.exportLibrary(library), {
+    format: 'stajpilot-songs', version: 1, songs: [song],
+  });
+});
+
+test('moving a bank moves its image assignments with it', () => {
+  const images = { '1': 2, '6': 3, '11': 4, '625': 5 };
+  const moved = model.moveSlotImages(images, 1, 3);
+  assert.deepEqual(moved, { '1': 3, '6': 4, '11': 2, '625': 5 });
+  assert.deepEqual(images, { '1': 2, '6': 3, '11': 4, '625': 5 });
+});
+
+test('duplicating and clearing a bank update only its five image positions', () => {
+  const images = { '1': 2, '3': 42, '6': 5, '625': 4 };
+  const copied = model.copySlotImages(images, 1, 2);
+  assert.deepEqual(copied, { '1': 2, '3': 42, '6': 2, '8': 42, '625': 4 });
+  assert.deepEqual(model.clearSlotImages(copied, 1), { '6': 2, '8': 42, '625': 4 });
+  assert.deepEqual(images, { '1': 2, '3': 42, '6': 5, '625': 4 });
+});
+
+test('invalid image metadata is rejected before editing', () => {
+  const base = { format: 'stajpilot-songs', version: 1, songs: [] };
+  assert.throws(() => model.parseLibrary({ ...base, slotAmpImages: { '0': 1 } }), /slot image/);
+  assert.throws(() => model.parseLibrary({ ...base, slotAmpImages: { '626': 1 } }), /slot image/);
+  assert.throws(() => model.parseLibrary({ ...base, slotAmpImages: { '1': 101 } }), /slot image/);
+  assert.throws(() => model.parseLibrary({ ...base, rigAmpImages: { ' ': 1 } }), /rig image/);
+});

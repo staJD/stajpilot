@@ -107,6 +107,34 @@
     return banks;
   }
 
+  function parseImageAssignments(value, kind) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      throw new Error(`${kind} image assignments are invalid.`);
+    }
+    return Object.fromEntries(Object.entries(value).map(([key, image]) => {
+      const position = Number(key);
+      if ((kind === 'Slot' && (!/^\d+$/.test(key) ||
+          !Number.isInteger(position) || position < 1 || position > 625)) ||
+          (kind === 'Rig' && !key.trim()) ||
+          !Number.isInteger(image) || image < 1 || image > 100) {
+        throw new Error(`A ${kind.toLowerCase()} image assignment is invalid.`);
+      }
+      return [kind === 'Slot' ? String(position) : key, image];
+    }));
+  }
+
+  function parseLibrary(input, options = {}) {
+    const banks = parseDocument(input, options);
+    const document = input && !Array.isArray(input) ? input : {};
+    return {
+      banks,
+      slotAmpImages: Object.prototype.hasOwnProperty.call(document, 'slotAmpImages')
+        ? parseImageAssignments(document.slotAmpImages, 'Slot') : null,
+      rigAmpImages: Object.prototype.hasOwnProperty.call(document, 'rigAmpImages')
+        ? parseImageAssignments(document.rigAmpImages, 'Rig') : null,
+    };
+  }
+
   function exportDocument(banks) {
     if (!Array.isArray(banks) || banks.length !== BANK_COUNT) {
       throw new Error('The bank list is incomplete.');
@@ -119,6 +147,66 @@
         return [normalizeSong({ ...song, bank: index + 1 }, { allowLong: true })];
       }),
     };
+  }
+
+  function exportLibrary({ banks, slotAmpImages = null, rigAmpImages = null }) {
+    const document = exportDocument(banks);
+    if (slotAmpImages !== null) {
+      document.slotAmpImages = Object.fromEntries(
+        Object.entries(parseImageAssignments(slotAmpImages, 'Slot'))
+          .sort(([a], [b]) => Number(a) - Number(b))
+      );
+    }
+    if (rigAmpImages !== null) {
+      document.rigAmpImages = Object.fromEntries(
+        Object.entries(parseImageAssignments(rigAmpImages, 'Rig'))
+          .sort(([a], [b]) => a.localeCompare(b))
+      );
+    }
+    return document;
+  }
+
+  function slotPosition(bank, slotIndex) {
+    if (!Number.isInteger(bank) || bank < 1 || bank > BANK_COUNT ||
+        !Number.isInteger(slotIndex) || slotIndex < 0 || slotIndex >= SLOT_COUNT) {
+      throw new Error('Invalid bank or slot.');
+    }
+    return (bank - 1) * SLOT_COUNT + slotIndex + 1;
+  }
+
+  function moveSlotImages(images, from, to) {
+    if (![from, to].every((bank) => Number.isInteger(bank) && bank >= 1 && bank <= BANK_COUNT)) {
+      throw new Error('Invalid bank number.');
+    }
+    if (images === null) return null;
+    const groups = Array.from({ length: BANK_COUNT }, (_, index) =>
+      Array.from({ length: SLOT_COUNT }, (_, slot) =>
+        images[slotPosition(index + 1, slot)] || 0));
+    groups.splice(to - 1, 0, groups.splice(from - 1, 1)[0]);
+    return Object.fromEntries(groups.flatMap((group, bank) =>
+      group.flatMap((image, slot) => image
+        ? [[String(slotPosition(bank + 1, slot)), image]] : [])));
+  }
+
+  function copySlotImages(images, from, to) {
+    if (images === null) return null;
+    const result = { ...images };
+    for (let slot = 0; slot < SLOT_COUNT; slot++) {
+      const source = images[slotPosition(from, slot)];
+      const destination = slotPosition(to, slot);
+      if (source) result[destination] = source;
+      else delete result[destination];
+    }
+    return result;
+  }
+
+  function clearSlotImages(images, bank) {
+    if (images === null) return null;
+    const result = { ...images };
+    for (let slot = 0; slot < SLOT_COUNT; slot++) {
+      delete result[slotPosition(bank, slot)];
+    }
+    return result;
   }
 
   function firstLengthError(banks) {
@@ -147,7 +235,9 @@
   const api = {
     BANK_COUNT, FORMAT, VERSION, SLOT_NAME_LIMIT, SLOT_SUBNAME_LIMIT,
     emptyBanks, emptySong, isPopulated, graphemeLength, truncateGraphemes,
-    parseDocument, exportDocument, firstLengthError, moveBank,
+    parseDocument, exportDocument, parseLibrary, exportLibrary,
+    slotPosition, moveSlotImages, copySlotImages, clearSlotImages,
+    firstLengthError, moveBank,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.StajPilotSongs = api;
