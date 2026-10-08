@@ -20,7 +20,8 @@
     dialog: $('action-dialog'), dialogTitle: $('dialog-title'),
     dialogMessage: $('dialog-message'), dialogError: $('dialog-error'),
     targetLabel: $('target-label'), targetBank: $('target-bank'),
-    dialogConfirm: $('dialog-confirm'), importFile: $('import-file'),
+    dialogCancel: $('dialog-cancel'), dialogConfirm: $('dialog-confirm'),
+    importFile: $('import-file'),
     ampDialog: $('amp-dialog'), ampPosition: $('amp-dialog-position'),
     ampSourceNote: $('amp-source-note'),
     ampStrip: $('amp-strip'), ampSelectedName: $('amp-selected-name'),
@@ -96,7 +97,7 @@
     const unexported = hasLibraryData() && documentText() !== lastExported;
     elements.status.classList.toggle('warning', Boolean(lengthError) || unexported || !storageAvailable);
     elements.status.textContent = !storageAvailable
-      ? 'Browser draft unavailable - export a JSON backup'
+      ? 'Browser draft unavailable - export a Song file'
       : lengthError
         ? lengthError
       : unexported
@@ -363,6 +364,8 @@
     pendingAction = action;
     elements.dialogTitle.textContent = title;
     elements.dialogMessage.textContent = message;
+    elements.dialogCancel.textContent = action?.kind === 'import' || action?.kind === 'clearAll'
+      ? 'No' : 'Cancel';
     elements.dialogConfirm.textContent = confirmLabel;
     elements.dialogError.hidden = true;
     elements.targetLabel.hidden = !withTarget;
@@ -385,16 +388,13 @@
     }
     try {
       const incoming = model.parseLibrary(await fileCodec.decode(await file.text()));
-      const backupContents = hasLibraryData()
-        ? await fileCodec.encode(model.exportLibrary(library())) : null;
       const imageNote = incoming.slotAmpImages === null
         ? 'This file has no slot image assignments; the current assignments will stay.'
         : 'Slot image assignments from this file will replace the current assignments.';
-      showDialog({ kind: 'import', incoming, backupContents }, 'Replace song library?',
-        `${countSongs(incoming.banks)} songs found. This replaces all 125 banks. ` +
-        `${imageNote} Your current songs and amp image assignments will be downloaded as a backup first. ` +
-        'Do not edit backup files manually; changes may prevent import.',
-        'Back up and replace');
+      showDialog({ kind: 'import', incoming }, 'Replace song library?',
+        `${countSongs(incoming.banks)} songs found. This will replace the song list in this browser. ` +
+        `${imageNote} Continue?`,
+        'Yes');
     } catch (error) {
       showDialog(null, 'Import failed', error.message, 'Close');
     }
@@ -417,10 +417,6 @@
     if (action.kind === 'export') {
       completeExport(action.contents);
     } else if (action.kind === 'import' || action.kind === 'clearAll') {
-      if (action.backupContents !== null) {
-        const date = new Date().toISOString().slice(0, 10);
-        download(action.backupContents, `StajPilot_Songs_Backup_${date}.stajpilot`);
-      }
       pushUndo();
       if (action.kind === 'import') {
         const keptExistingImages =
@@ -509,17 +505,10 @@
       renderBankList();
     });
   }
-  $('clear-all-button').addEventListener('click', async () => {
-    try {
-      const backupContents = hasLibraryData()
-        ? await fileCodec.encode(model.exportLibrary(library())) : null;
-      showDialog({ kind: 'clearAll', backupContents }, 'Create a new library?',
-        'The current library will be downloaded as a backup before all banks are cleared.',
-        'Back up and clear');
-    } catch (error) {
-      showDialog(null, 'Backup failed', error.message, 'Close');
-    }
-  });
+  $('clear-all-button').addEventListener('click', () => showDialog(
+    { kind: 'clearAll' }, 'Create a new library?',
+    'This will clear all songs and amp image assignments in this browser. Continue?',
+    'Yes'));
   $('import-button').addEventListener('click', () => elements.importFile.click());
   elements.importFile.addEventListener('change', () => {
     readImport(elements.importFile.files[0]);
