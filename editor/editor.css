@@ -74,11 +74,19 @@ h3 { font-size: 16px; font-weight: 700; }
 .button.danger:hover:not(:disabled) { border-color: var(--red); }
 .icon-button { width: 38px; padding: 2px 0 6px; font-size: 27px; line-height: 1; }
 
+.compatibility-note {
+  padding: 10px 24px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+}
+.compatibility-note strong { color: var(--gold); }
+
 .workspace {
   display: grid;
   grid-template-columns: minmax(250px, 315px) minmax(0, 1fr);
-  height: clamp(520px, calc(100vh - 190px), 900px);
-  height: clamp(520px, calc(100dvh - 190px), 900px);
+  height: clamp(520px, calc(100vh - 235px), 900px);
+  height: clamp(520px, calc(100dvh - 235px), 900px);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -245,6 +253,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .72); }
   .product-name { font-size: 13px; }
   .site-link { font-size: 12px; }
   .page-toolbar { padding: 14px; }
+  .compatibility-note { padding: 10px 14px; }
   .toolbar-actions { width: 100%; }
   .toolbar-actions .button:not(.icon-button) { flex: 1 1 auto; }
   .slot-column-head { display: none; }
