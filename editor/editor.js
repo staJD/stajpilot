@@ -2,6 +2,7 @@
   'use strict';
 
   const model = window.StajPilotSongs;
+  const fileCodec = window.StajPilotSongFile;
   const STORAGE_KEY = 'stajpilot-song-editor-draft-v1';
   const AMP_OPTIONS = [
     { id: 0, name: 'NONE', image: null },
@@ -215,7 +216,6 @@
       fragment.append(row);
     });
     elements.slotRows.replaceChildren(fragment);
-    $('move-button').disabled = !model.isPopulated(song);
     $('duplicate-button').disabled = !model.isPopulated(song);
     $('clear-button').disabled = !model.isPopulated(song);
   }
@@ -238,7 +238,6 @@
     banks[selectedBank - 1] = model.isPopulated(song) ? song : null;
     afterChange();
     const populated = model.isPopulated(banks[selectedBank - 1]);
-    $('move-button').disabled = !populated;
     $('duplicate-button').disabled = !populated;
     $('clear-button').disabled = !populated;
   }
@@ -320,10 +319,8 @@
     elements.ampDialog.close();
   }
 
-  function download(data, filename) {
-    const blob = new Blob([JSON.stringify(data, null, 2) + '\n'], {
-      type: 'application/json;charset=utf-8',
-    });
+  function download(contents, filename) {
+    const blob = new Blob([contents], { type: 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
@@ -334,22 +331,32 @@
     setTimeout(() => URL.revokeObjectURL(url), 60_000);
   }
 
-  function completeExport() {
+  function completeExport(contents) {
     const date = new Date().toISOString().slice(0, 10);
-    download(model.exportLibrary(library()), `StajPilot_Songs_${date}.json`);
+    download(contents, `StajPilot_Songs_${date}.stajpilot`);
     lastExported = documentText();
     persist();
     updateStatus();
   }
 
-  function exportSongs() {
-    const lengthError = model.firstLengthError(banks);
-    if (lengthError) {
-      showDialog({ kind: 'exportInvalid' }, 'Long slot text',
-        `${lengthError} You can still download a backup, but this file will not match the app's input limits.`, 'Export backup');
+  async function exportSongs() {
+    let contents;
+    try {
+      contents = await fileCodec.encode(model.exportLibrary(library()));
+    } catch (error) {
+      showDialog(null, 'Export failed', error.message, 'Close');
       return;
     }
-    completeExport();
+    const lengthError = model.firstLengthError(banks);
+    if (lengthError) {
+      showDialog({ kind: 'export', contents }, 'Long slot text',
+        `${lengthError} You can still download a backup, but this file will not match the app's input limits. ` +
+        'Do not edit Song backup files manually; changes may prevent import.', 'Export backup');
+      return;
+    }
+    showDialog({ kind: 'export', contents }, 'Export Song backup?',
+      'Use this editor to make changes. Editing a backup file manually can make it impossible to import.',
+      'Export backup');
   }
 
   function showDialog(action, title, message, confirmLabel, withTarget = false) {
@@ -373,17 +380,20 @@
   async function readImport(file) {
     if (!file) return;
     if (file.size > 2_000_000) {
-      showDialog(null, 'Import failed', 'The JSON file is too large.', 'Close');
+      showDialog(null, 'Import failed', 'The Song file is too large.', 'Close');
       return;
     }
     try {
-      const incoming = model.parseLibrary(JSON.parse(await file.text()));
+      const incoming = model.parseLibrary(await fileCodec.decode(await file.text()));
+      const backupContents = hasLibraryData()
+        ? await fileCodec.encode(model.exportLibrary(library())) : null;
       const imageNote = incoming.slotAmpImages === null
         ? 'This file has no slot image assignments; the current assignments will stay.'
         : 'Slot image assignments from this file will replace the current assignments.';
-      showDialog({ kind: 'import', incoming }, 'Replace song library?',
+      showDialog({ kind: 'import', incoming, backupContents }, 'Replace song library?',
         `${countSongs(incoming.banks)} songs found. This replaces all 125 banks. ` +
-        `${imageNote} Your current songs and amp image assignments will be downloaded as a backup first.`,
+        `${imageNote} Your current songs and amp image assignments will be downloaded as a backup first. ` +
+        'Do not edit backup files manually; changes may prevent import.',
         'Back up and replace');
     } catch (error) {
       showDialog(null, 'Import failed', error.message, 'Close');
@@ -397,19 +407,19 @@
     }
     const action = pendingAction;
     const target = Number(elements.targetBank.value);
-    if (action.kind === 'move' || action.kind === 'duplicate') {
+    if (action.kind === 'duplicate') {
       if (!Number.isInteger(target) || target < 1 || target > model.BANK_COUNT || target === selectedBank) {
         dialogError('Choose a different bank between 1 and 125.');
         return;
       }
     }
 
-    if (action.kind === 'exportInvalid') {
-      completeExport();
+    if (action.kind === 'export') {
+      completeExport(action.contents);
     } else if (action.kind === 'import' || action.kind === 'clearAll') {
-      if (hasLibraryData()) {
+      if (action.backupContents !== null) {
         const date = new Date().toISOString().slice(0, 10);
-        download(model.exportLibrary(library()), `StajPilot_Songs_Backup_${date}.json`);
+        download(action.backupContents, `StajPilot_Songs_Backup_${date}.stajpilot`);
       }
       pushUndo();
       if (action.kind === 'import') {
@@ -428,11 +438,6 @@
       }
       selectedBank = action.kind === 'import'
         ? banks.findIndex(model.isPopulated) + 1 || 1 : 1;
-    } else if (action.kind === 'move') {
-      pushUndo();
-      banks = model.moveBank(banks, selectedBank, target);
-      slotAmpImages = model.moveSlotImages(slotAmpImages, selectedBank, target);
-      selectedBank = target;
     } else if (action.kind === 'duplicate') {
       if (banks[target - 1]) {
         dialogError(`Bank ${target} already has a song. Choose an empty bank.`);
@@ -504,8 +509,17 @@
       renderBankList();
     });
   }
-  $('clear-all-button').addEventListener('click', () => showDialog({ kind: 'clearAll' },
-    'Create a new library?', 'The current library will be downloaded as a backup before all banks are cleared.', 'Back up and clear'));
+  $('clear-all-button').addEventListener('click', async () => {
+    try {
+      const backupContents = hasLibraryData()
+        ? await fileCodec.encode(model.exportLibrary(library())) : null;
+      showDialog({ kind: 'clearAll', backupContents }, 'Create a new library?',
+        'The current library will be downloaded as a backup before all banks are cleared.',
+        'Back up and clear');
+    } catch (error) {
+      showDialog(null, 'Backup failed', error.message, 'Close');
+    }
+  });
   $('import-button').addEventListener('click', () => elements.importFile.click());
   elements.importFile.addEventListener('change', () => {
     readImport(elements.importFile.files[0]);
@@ -513,8 +527,6 @@
   });
   $('export-button').addEventListener('click', exportSongs);
   elements.undo.addEventListener('click', undo);
-  $('move-button').addEventListener('click', () => showDialog({ kind: 'move' },
-    'Move song', 'Songs between the two banks will shift by one position.', 'Move', true));
   $('duplicate-button').addEventListener('click', () => showDialog({ kind: 'duplicate' },
     'Duplicate song', 'Choose an empty destination bank.', 'Duplicate', true));
   $('clear-button').addEventListener('click', () => showDialog({ kind: 'clear' },

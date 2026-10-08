@@ -33,32 +33,6 @@ test('rejects duplicate banks, invalid slots and unknown formats', () => {
   assert.throws(() => model.parseDocument({ format: 'other', songs: [song] }), /not a StajPilot/);
 });
 
-test('move shifts intervening banks and leaves the source data intact', () => {
-  const first = model.emptySong(1);
-  first.songName = 'First';
-  const second = model.emptySong(2);
-  second.songName = 'Second';
-  const banks = model.parseDocument([first, second]);
-  const moved = model.moveBank(banks, 1, 3);
-  assert.equal(moved[0].songName, 'Second');
-  assert.equal(moved[0].bank, 1);
-  assert.equal(moved[2].songName, 'First');
-  assert.equal(moved[2].bank, 3);
-  assert.equal(banks[0].songName, 'First');
-  assert.equal(banks[0].bank, 1);
-});
-
-test('moving across an empty bank does not duplicate or lose a song', () => {
-  const first = model.emptySong(1);
-  first.songName = 'First';
-  const third = model.emptySong(3);
-  third.songName = 'Third';
-  const moved = model.moveBank(model.parseDocument([first, third]), 3, 1);
-  assert.deepEqual(model.exportDocument(moved).songs.map((song) => [song.bank, song.songName]), [
-    [1, 'Third'], [2, 'First'],
-  ]);
-});
-
 test('slot limits match the app while song titles have no fixed limit', () => {
   const song = model.emptySong(9);
   song.songName = 'Long title '.repeat(30);
@@ -109,13 +83,6 @@ test('older song-only files do not erase app image assignments', () => {
   assert.deepEqual(model.exportLibrary(library), {
     format: 'stajpilot-songs', version: 1, songs: [song],
   });
-});
-
-test('moving a bank moves its image assignments with it', () => {
-  const images = { '1': 2, '6': 3, '11': 4, '625': 5 };
-  const moved = model.moveSlotImages(images, 1, 3);
-  assert.deepEqual(moved, { '1': 3, '6': 4, '11': 2, '625': 5 });
-  assert.deepEqual(images, { '1': 2, '6': 3, '11': 4, '625': 5 });
 });
 
 test('duplicating and clearing a bank update only its five image positions', () => {

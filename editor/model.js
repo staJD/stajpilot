@@ -174,20 +174,6 @@
     return (bank - 1) * SLOT_COUNT + slotIndex + 1;
   }
 
-  function moveSlotImages(images, from, to) {
-    if (![from, to].every((bank) => Number.isInteger(bank) && bank >= 1 && bank <= BANK_COUNT)) {
-      throw new Error('Invalid bank number.');
-    }
-    if (images === null) return null;
-    const groups = Array.from({ length: BANK_COUNT }, (_, index) =>
-      Array.from({ length: SLOT_COUNT }, (_, slot) =>
-        images[slotPosition(index + 1, slot)] || 0));
-    groups.splice(to - 1, 0, groups.splice(from - 1, 1)[0]);
-    return Object.fromEntries(groups.flatMap((group, bank) =>
-      group.flatMap((image, slot) => image
-        ? [[String(slotPosition(bank + 1, slot)), image]] : [])));
-  }
-
   function copySlotImages(images, from, to) {
     if (images === null) return null;
     const result = { ...images };
@@ -221,23 +207,11 @@
     return null;
   }
 
-  function moveBank(banks, from, to) {
-    if (![from, to].every((bank) => Number.isInteger(bank) && bank >= 1 && bank <= BANK_COUNT)) {
-      throw new Error('Invalid bank number.');
-    }
-    if (!banks[from - 1]) throw new Error('The source bank is empty.');
-    const moved = banks.map((song) => song && normalizeSong(song, { allowLong: true }));
-    moved.splice(to - 1, 0, moved.splice(from - 1, 1)[0]);
-    moved.forEach((song, index) => { if (song) song.bank = index + 1; });
-    return moved;
-  }
-
   const api = {
     BANK_COUNT, FORMAT, VERSION, SLOT_NAME_LIMIT, SLOT_SUBNAME_LIMIT,
     emptyBanks, emptySong, isPopulated, graphemeLength, truncateGraphemes,
     parseDocument, exportDocument, parseLibrary, exportLibrary,
-    slotPosition, moveSlotImages, copySlotImages, clearSlotImages,
-    firstLengthError, moveBank,
+    slotPosition, copySlotImages, clearSlotImages, firstLengthError,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.StajPilotSongs = api;
