@@ -98,6 +98,25 @@ main {
 
 main.wide { max-width: 880px; }
 
+.home-preview { margin: 28px 0 8px; }
+.home-preview img { display: block; width: 100%; height: auto; }
+.home-preview figcaption { margin-top: 8px; color: var(--ink-dim); font-size: 13px; }
+
+.model-list { border-top: 1px solid var(--border); }
+.model-list > div {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) 2fr;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+.model-list h3 { margin: 0; }
+.model-list p { margin: 0; color: var(--ink-dim); font-size: 15px; }
+.model-note { margin-top: 14px; color: var(--ink-dim); font-size: 14px; }
+@media (max-width: 560px) {
+  .model-list > div { grid-template-columns: 1fr; gap: 4px; }
+}
+
 h1 {
   font-size: clamp(28px, 5vw, 38px);
   font-weight: 800;
