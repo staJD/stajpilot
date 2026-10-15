@@ -1,0 +1,9 @@
+/* Shared release content only; the connection guides retain their layout. */
+.stage2-photo { margin: 24px 0; }
+.stage2-photo img { display: block; width: 100%; height: auto; }
+.stage2-photo figcaption { font-size: 14px; color: var(--ink-dim); margin-top: 10px; }
+.pilot-intro { margin-top: 36px; }
+.pilot-intro > h3 { font-size: 26px; }
+.save-reminder { color: #ffdd5e; font-size: 22px; }
+.ios-page .stage2-gallery img, .android-page .stage2-gallery img { aspect-ratio: auto; height: auto; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
