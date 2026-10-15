@@ -26,7 +26,6 @@
 .home-page .product-photo img { display: block; width: 100%; height: auto; }
 .home-page .product-photo a { display: block; }
 .home-page .intro-photo { margin: 22px 0 28px; }
-.home-page .intro-photo img { max-height: 460px; object-fit: contain; object-position: left center; }
 .home-page .product-photo figcaption { font-size: 13px; color: var(--ink-dim); margin-top: 10px; }
 .home-page .feature-columns, .home-page .photo-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px; }
 .home-page .feature-columns { margin: 28px 0 4px; }
