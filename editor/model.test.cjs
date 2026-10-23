@@ -1,6 +1,25 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const model = require('./model.js');
+const codec = require('./file_codec.js');
+
+test('all ten amp images survive Song files with existing image metadata', async () => {
+  const songs = [model.emptySong(1), model.emptySong(2)];
+  for (const song of songs) {
+    song.songName = `Gallery ${song.bank}`;
+    song.slots.forEach((slot, index) => {
+      slot.ampImage = (song.bank - 1) * 5 + index + 1;
+    });
+  }
+  const backup = {
+    format: 'stajpilot-songs', version: 1, songs,
+    slotAmpImages: { '1': 6, '2': 7, '3': 8, '4': 9, '5': 10, '625': 3 },
+    rigAmpImages: { 'Existing Rig': 5, 'New Rig': 10 },
+  };
+  const file = await codec.encode(model.exportLibrary(model.parseLibrary(backup)));
+  const restored = model.parseLibrary(await codec.decode(file));
+  assert.deepEqual(model.exportLibrary(restored), backup);
+});
 
 test('Unicode song and slot text round-trips without changing amp image IDs', () => {
   const original = model.emptySong(3);

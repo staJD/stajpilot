@@ -11,6 +11,11 @@
     { id: 3, name: 'VELVET', image: 'amps/stajpilot_03_velvet.png' },
     { id: 4, name: 'VECTOR', image: 'amps/stajpilot_04_vector.png' },
     { id: 5, name: 'ATELIER', image: 'amps/stajpilot_05_atelier_v2.png' },
+    { id: 6, name: 'SILVERLINE', image: 'amps/stajpilot_06_silverline.webp' },
+    { id: 7, name: 'GOLDLINE', image: 'amps/stajpilot_07_goldline.webp' },
+    { id: 8, name: 'TOPSIDE', image: 'amps/stajpilot_08_topside.webp' },
+    { id: 9, name: 'IRONWORK', image: 'amps/stajpilot_09_ironwork.webp' },
+    { id: 10, name: 'SIGNATURE', image: 'amps/stajpilot_10_signature.webp' },
   ];
   const $ = (id) => document.getElementById(id);
   const elements = {
