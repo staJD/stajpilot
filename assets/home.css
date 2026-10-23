@@ -22,6 +22,9 @@
 .home-page .home-section { border-top: 1px solid var(--border); padding-top: 38px; margin-top: 38px; }
 .home-page .section-heading { max-width: 830px; }
 .home-page .section-heading > p:last-child { color: #c7cbd2; }
+.home-page .mode-nav { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 18px 0 28px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.home-page .mode-nav a { font-size: 15px; font-weight: 700; padding: 6px 0; }
+.home-page [id] { scroll-margin-top: 24px; }
 .home-page .product-photo { margin: 24px 0; }
 .home-page .product-photo img { display: block; width: 100%; height: auto; }
 .home-page .product-photo a { display: block; }
@@ -30,6 +33,15 @@
 .home-page .feature-columns, .home-page .photo-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px; }
 .home-page .feature-columns { margin: 28px 0 4px; }
 .home-page .feature-columns p { color: #c7cbd2; }
+.home-page .song-details { align-items: start; }
+.home-page .song-details .product-photo { margin: 0; }
+.home-page .song-details h3:not(:first-child) { margin-top: 24px; }
+.home-page .settings-guide { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 36px; margin: 28px 0; }
+.home-page .settings-guide > div { min-width: 0; }
+.home-page .settings-guide dl { margin: 0; }
+.home-page .settings-guide dt { font-size: 15px; font-weight: 750; margin-top: 18px; }
+.home-page .settings-guide dd { margin: 5px 0 0; font-size: 16px; color: #c7cbd2; }
+.home-page .next-update { display: inline-block; font-size: 12px; color: #ffdd5e; margin-left: 6px; }
 .home-page .photo-pair { gap: 20px; }
 .home-page .save-warning { font-size: 24px; font-weight: 750; color: #ffdd5e; }
 .home-page .editing-notes { padding-left: 22px; }
@@ -45,6 +57,7 @@
   .home-page h2 { font-size: 26px; }
   .home-page .lede { font-size: 22px; }
   .home-page .feature-columns, .home-page .photo-pair { grid-template-columns: 1fr; gap: 16px; }
+  .home-page .settings-guide { grid-template-columns: 1fr; gap: 28px; }
   .home-page .photo-pair .product-photo { margin: 8px 0; }
   .home-page .store-links .text-link { margin-left: 0; }
   .home-page .home-section { margin-top: 28px; padding-top: 28px; }
