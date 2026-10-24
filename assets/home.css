@@ -42,6 +42,9 @@
 .home-page .settings-guide dt { font-size: 15px; font-weight: 750; margin-top: 18px; }
 .home-page .settings-guide dd { margin: 5px 0 0; font-size: 16px; color: #c7cbd2; }
 .home-page .next-update { display: inline-block; font-size: 12px; color: #ffdd5e; margin-left: 6px; }
+.home-page .compatibility-note { border-top: 1px solid var(--border); padding: 18px 0 0; margin: 24px 0; }
+.home-page .compatibility-note summary { cursor: pointer; font-size: 16px; font-weight: 700; color: #70b4ff; }
+.home-page .compatibility-note summary:focus-visible { outline: 2px solid #70b4ff; outline-offset: 5px; }
 .home-page .photo-pair { gap: 20px; }
 .home-page .save-warning { font-size: 24px; font-weight: 750; color: #ffdd5e; }
 .home-page .editing-notes { padding-left: 22px; }
