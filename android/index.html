@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="../assets/styles.css">
   <link rel="stylesheet" href="./android.css">
   <link rel="stylesheet" href="../assets/stage2.css">
+  <link rel="stylesheet" href="../assets/quick-connect.css?v=20261105">
 </head>
 <body class="android-page">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -26,12 +27,30 @@
       <p class="eyebrow">Android / Phones &amp; tablets</p>
       <h1 id="page-title">StajPilot for Android</h1>
       <p class="intro-copy"><strong>STAJ for performance. PILOT for editing.</strong> A display, MIDI controller, and editor for KEMPER PROFILER Player, Stage, Head (Toaster), and Rack, including MK1 and MK2 modes.</p>
-      <div class="intro-actions"><a class="action-link" href="https://play.google.com/store/apps/details?id=com.stajpilot.mobile">Get StajPilot on Google Play <span aria-hidden="true">&rarr;</span></a><a class="quiet-link" href="https://youtu.be/GtrqxNteZMw">Watch PILOT mode <span aria-hidden="true">&nearr;</span></a></div>
+      <div class="intro-actions"><a class="action-link" href="https://play.google.com/store/apps/details?id=com.stajpilot.mobile">Get StajPilot on Google Play <span aria-hidden="true">&rarr;</span></a><a class="quiet-link quick-connect-link" href="#quick-connect">Quick Connection Guide <span aria-hidden="true">&darr;</span></a><a class="quiet-link" href="https://youtu.be/GtrqxNteZMw">Watch PILOT mode <span aria-hidden="true">&nearr;</span></a></div>
+      <section class="quick-connect" id="quick-connect" aria-labelledby="quick-connect-title">
+        <div class="quick-connect-heading"><h2 id="quick-connect-title">Quick Connection Guide</h2><p>Complete all three steps before use.</p></div>
+        <ol class="quick-connect-steps">
+          <li><h3><span aria-hidden="true">01</span> Connect over USB</h3><p><strong>USB-B:</strong> Android USB-C &rarr; Kemper USB-B. Use a data cable and a compatible host/OTG adapter if needed. No USB mode change is required.</p><p><strong>USB-A:</strong> Kemper USB-A &rarr; Android. Set Android to <strong>MIDI</strong> as shown below.</p></li>
+          <li><h3><span aria-hidden="true">02</span> Set the Kemper MIDI channel</h3><p>In <strong>Rig Manager</strong>, open the PROFILER's MIDI settings. Set <strong>MIDI Global Channel to 1 or Omni</strong>.</p><p>This is required for StajPilot's bidirectional MIDI SysEx communication.</p></li>
+          <li><h3><span aria-hidden="true">03</span> Set DEVICE and PLAYER LEVEL</h3><p><strong>Required:</strong> open <strong>SETTING</strong> (gear button). Set <strong>DEVICE</strong> to <strong>PLAYER</strong>, <strong>MK1</strong>, or <strong>MK2</strong> to match your Kemper.</p><p>Player users: set <strong>PLAYER LEVEL</strong> to your actual <strong>LEVEL I, II, or III</strong>.</p><p>Tap <strong>SAVE</strong> to apply.</p></li>
+        </ol>
+        <div class="quick-connect-usb" id="quick-usb-midi" aria-labelledby="quick-usb-midi-title">
+          <h3 id="quick-usb-midi-title">Android MIDI setup (Kemper USB-A only)</h3>
+          <ol>
+            <li><strong>Settings &gt; About phone/tablet:</strong> tap <strong>Build number seven times</strong> to enable Developer options. Menu names vary.</li>
+            <li>Set <strong>Developer options &gt; Default USB configuration &gt; MIDI</strong> to select MIDI automatically when reconnecting.</li>
+            <li>After connecting, check the USB notification: <strong>Use USB for: MIDI</strong>.</li>
+          </ol>
+          <p>If the default MIDI option is unavailable or resets, select MIDI manually each time. <strong>USB debugging is not required.</strong></p>
+        </div>
+        <p class="quick-connect-more"><a href="#connect">Detailed USB connection guide</a> &middot; <a href="#troubleshooting">Connection troubleshooting</a></p>
+      </section>
       <p class="access-note"><strong>Stage 2 launch special: US$29.99.</strong> StajPilot is publicly available on Google Play. Stage 2 features require version 2.0.0; update availability depends on review and regional rollout. Local prices may vary.</p>
       <figure class="main-screen"><img src="../assets/images/android-main-controller.png" width="1920" height="1080" fetchpriority="high" alt="StajPilot's landscape controller with eight effect blocks, detailed effect names, Fixed FX, rig information, gain, tempo and five slots"><figcaption>Rig information and essential controls, together on one landscape display.</figcaption></figure>
       <ul class="essentials" aria-label="App essentials"><li>Player / Stage / Head / Rack</li><li>STAJ &amp; PILOT modes</li><li>USB MIDI</li><li>Chocolate Bluetooth pedal</li><li>No subscription</li></ul>
     </section>
-    <nav class="section-nav" aria-label="On this page"><a href="#features">Features</a><a href="#download">Get the app</a><a href="#pedals">Chocolate pedal</a><a href="#connect">Connect</a><a href="#troubleshooting">Troubleshooting</a></nav>
+    <nav class="section-nav" aria-label="On this page"><a href="#quick-connect">Quick Connection Guide</a><a href="#features">Features</a><a href="#download">Get the app</a><a href="#pedals">Chocolate pedal</a><a href="#connect">Detailed connection guide</a><a href="#troubleshooting">Troubleshooting</a></nav>
 
     <section class="page-section" id="features" aria-labelledby="features-title">
       <p class="eyebrow">On stage</p><h2 id="features-title">See your rig. Stay in control.</h2>

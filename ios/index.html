@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="../assets/styles.css">
   <link rel="stylesheet" href="./ios.css">
   <link rel="stylesheet" href="../assets/stage2.css">
+  <link rel="stylesheet" href="../assets/quick-connect.css?v=20261105">
   <script src="./ios.js" defer></script>
 </head>
 <body class="ios-page">
@@ -31,13 +32,22 @@
       <p class="eyebrow">iPhone &amp; iPad / USB MIDI</p>
       <h1 id="page-title">StajPilot for iPhone &amp; iPad</h1>
       <p class="intro-copy"><strong>STAJ for performance. PILOT for editing.</strong> A display, MIDI controller, and editor for KEMPER PROFILER Player, Stage, Head, and Rack, including MK1 and MK2 modes.</p>
+      <div class="intro-actions"><a class="download-link" href="https://apps.apple.com/app/stajpilot/id6813749166">Get StajPilot on the App Store <span aria-hidden="true">&rarr;</span></a><a class="quiet-link quick-connect-link" href="#quick-connect">Quick Connection Guide <span aria-hidden="true">&darr;</span></a></div>
+      <section class="quick-connect" id="quick-connect" aria-labelledby="quick-connect-title">
+        <div class="quick-connect-heading"><h2 id="quick-connect-title">Quick Connection Guide</h2><p>Complete all three steps before use.</p></div>
+        <ol class="quick-connect-steps">
+          <li><h3><span aria-hidden="true">01</span> Connect to Kemper USB-B</h3><p>Power on your Kemper. Connect your iPhone/iPad to its <strong>USB-B port</strong> with a data-capable cable.</p><p><strong>USB-C:</strong> use a compatible data cable or host adapter. <strong>Lightning:</strong> use a compatible USB camera/host adapter and data cable.</p><p>iOS uses <strong>USB-B only</strong>, not Kemper USB-A.</p></li>
+          <li><h3><span aria-hidden="true">02</span> Set the Kemper MIDI channel</h3><p>In <strong>Rig Manager</strong>, open the PROFILER's MIDI settings. Set <strong>MIDI Global Channel to 1 or Omni</strong>.</p><p>This is required for StajPilot's bidirectional MIDI SysEx communication.</p></li>
+          <li><h3><span aria-hidden="true">03</span> Set DEVICE and PLAYER LEVEL</h3><p><strong>Required:</strong> open <strong>SETTING</strong> (gear button). Set <strong>DEVICE</strong> to <strong>PLAYER</strong>, <strong>MK1</strong>, or <strong>MK2</strong> to match your Kemper.</p><p>Player users: set <strong>PLAYER LEVEL</strong> to your actual <strong>LEVEL I, II, or III</strong>.</p><p>Tap <strong>SAVE</strong> to apply.</p></li>
+        </ol>
+        <p class="quick-connect-more"><a href="#connect">Detailed USB connection guide</a> &middot; <a href="#troubleshooting">Connection troubleshooting</a></p>
+      </section>
       <p class="release-notice"><strong>Stage 2 / Version 2.0.0.</strong> PILOT editing and Custom Tuner join Song Mode and Song editing. Availability depends on store approval and regional rollout; check the version shown in the App Store.</p>
-      <div class="intro-actions"><a class="download-link" href="https://apps.apple.com/app/stajpilot/id6813749166">Get StajPilot on the App Store <span aria-hidden="true">&rarr;</span></a><a class="quiet-link" href="#connect">Connection guide <span aria-hidden="true">&darr;</span></a></div>
       <p class="launch-note"><strong>Stage 2 launch special: US$29.99.</strong> Existing purchasers receive updates at no additional cost. Check the App Store for your local price.</p>
       <figure class="main-screen"><img src="../assets/images/ios-main-controller.png" width="2778" height="1284" fetchpriority="high" alt="StajPilot's landscape controller showing eight effect blocks, detailed effect names, Fixed FX, rig information, gain, tempo and five slots"><figcaption>Your rig, effects and essential controls, together on one landscape display.</figcaption></figure>
       <ul class="essentials" aria-label="App essentials"><li>Player / Stage / Head / Rack</li><li>Wired USB MIDI</li><li>No account</li><li>No subscription</li><li>No internet needed to use the app</li></ul>
     </section>
-    <nav class="section-nav" aria-label="On this page"><a href="#features">Features</a><a href="#connect">Connect</a><a href="#troubleshooting">Troubleshooting</a><a href="#testing">Behind the connection</a></nav>
+    <nav class="section-nav" aria-label="On this page"><a href="#quick-connect">Quick Connection Guide</a><a href="#features">Features</a><a href="#connect">Detailed connection guide</a><a href="#troubleshooting">Troubleshooting</a><a href="#testing">Behind the connection</a></nav>
 
     <section class="page-section" id="features" aria-labelledby="features-title">
       <div class="section-heading"><p class="eyebrow">On stage</p><h2 id="features-title">See your rig. Stay in control.</h2></div>

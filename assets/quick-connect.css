@@ -1,0 +1,77 @@
+/* Connection essentials appear before the platform screenshots. */
+.quick-connect {
+  margin: 26px 0;
+  padding: 22px 0;
+  border-top: 3px solid #37cfb4;
+  border-bottom: 1px solid var(--border);
+  scroll-margin-top: 20px;
+}
+.quick-connect .quick-connect-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 20px;
+  margin-bottom: 20px;
+}
+.quick-connect .quick-connect-heading h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+}
+.quick-connect .quick-connect-heading p {
+  margin: 0;
+  color: #37cfb4;
+  font-size: 14px;
+  font-weight: 700;
+}
+.quick-connect .quick-connect-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.quick-connect .quick-connect-steps > li {
+  min-width: 0;
+  margin: 0;
+}
+.quick-connect .quick-connect-steps h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.quick-connect .quick-connect-steps h3 span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--accent-link);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.quick-connect p, .quick-connect li {
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.quick-connect .quick-connect-steps p { margin: 0 0 10px; }
+.quick-connect .quick-connect-steps p:last-child { margin-bottom: 0; }
+.quick-connect a { text-decoration: underline; text-underline-offset: 3px; }
+.quick-connect .quick-connect-usb {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.quick-connect .quick-connect-usb h3 { margin: 0 0 8px; font-size: 18px; }
+.quick-connect .quick-connect-usb ol { margin: 0 0 10px; padding-left: 23px; }
+.quick-connect .quick-connect-usb li { padding-left: 3px; margin-bottom: 6px; }
+.quick-connect .quick-connect-usb p { margin: 0; }
+.quick-connect .quick-connect-more { margin: 18px 0 0; font-size: 14px; }
+.intro-actions .quick-connect-link { color: #37cfb4; font-weight: 700; }
+@media (max-width: 760px) {
+  .quick-connect { margin: 22px 0; padding: 20px 0; }
+  .quick-connect .quick-connect-heading h2 { font-size: 25px; }
+  .quick-connect .quick-connect-steps { grid-template-columns: 1fr; gap: 0; }
+  .quick-connect .quick-connect-steps > li { padding: 16px 0; border-top: 1px solid var(--border); }
+  .quick-connect .quick-connect-steps > li:first-child { padding-top: 0; border-top: 0; }
+  .quick-connect .quick-connect-steps > li:last-child { padding-bottom: 0; }
+  .quick-connect .quick-connect-steps h3 span { display: inline-block; min-width: 32px; margin: 0; }
+}
