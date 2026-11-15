@@ -19,6 +19,20 @@
 .home-page .offer strong > span { font-size: 24px; white-space: nowrap; }
 .home-page .offer-detail { display: block; font-size: 15px; color: #c7cbd2; margin-top: 4px; }
 .home-page .release-note, .home-page .inline-note { font-size: 14px; color: var(--ink-dim); }
+.home-page .update-notice { border-top: 2px solid var(--accent); border-bottom: 1px solid var(--border); padding: 22px 0; margin: 26px 0; }
+.home-page .update-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 20px; }
+.home-page .update-heading h2 { font-size: 26px; margin: 0; }
+.home-page .update-status { color: #ffdd5e; font-size: 16px; font-weight: 700; margin: 0; }
+.home-page .update-summary { margin: 12px 0 22px; color: #c7cbd2; }
+.home-page .update-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.home-page .update-details > div { min-width: 0; }
+.home-page .update-details h3 { font-size: 18px; margin: 0 0 12px; }
+.home-page .wifi-precautions h3 { color: #ffdd5e; }
+.home-page .wifi-precautions ul { margin: 0; padding-left: 22px; }
+.home-page .wifi-precautions li { margin-bottom: 14px; }
+.home-page .wifi-consent p { margin: 0 0 10px; color: #c7cbd2; }
+.home-page .wifi-consent strong { color: var(--ink); }
+.home-page .wifi-consent p:last-child { margin-bottom: 0; }
 .home-page .home-section { border-top: 1px solid var(--border); padding-top: 38px; margin-top: 38px; }
 .home-page .section-heading { max-width: 830px; }
 .home-page .section-heading > p:last-child { color: #c7cbd2; }
@@ -59,6 +73,7 @@
   .home-page h1 { font-size: 38px; }
   .home-page h2 { font-size: 26px; }
   .home-page .lede { font-size: 22px; }
+  .home-page .update-details { grid-template-columns: 1fr; gap: 16px; }
   .home-page .feature-columns, .home-page .photo-pair { grid-template-columns: 1fr; gap: 16px; }
   .home-page .settings-guide { grid-template-columns: 1fr; gap: 28px; }
   .home-page .photo-pair .product-photo { margin: 8px 0; }

@@ -24,3 +24,26 @@ for (const page of ['index.html', 'ios/index.html', 'android/index.html', 'suppo
     assert.equal(notice.at(-1), 'Continued updates and support for StajPilot are not guaranteed.');
   });
 }
+
+test('home update preview includes Wi-Fi precautions and the in-app notice', () => {
+  const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+  const update = html.match(/<section class="update-notice"[^>]*>([\s\S]*?)<\/section>/);
+  assert.ok(update, 'Missing update preview');
+  for (const text of [
+    'StajPilot 2.0.5',
+    'Preparing for release',
+    'Wi-Fi connectivity for STAJ mode and an improved tuner',
+    'Existing USB MIDI connectivity remains available.',
+    'PILOT editing is not available in Wi-Fi mode.',
+    'Do not connect a USB cable to the KEMPER while using Wi-Fi mode.',
+    'Connecting multiple devices to the KEMPER over Wi-Fi is not recommended.',
+    'Experimental connection. Kemper does not provide official support for this connection.',
+    'Operation may stop at any time, including due to firmware changes.',
+    'Hardware stability and compatibility have not been verified.',
+    'Please use this connection only if you agree to do so with these limitations in mind.',
+  ]) {
+    assert.ok(update[1].includes(text), `Missing announcement text: ${text}`);
+  }
+  assert.doesNotMatch(update[1], /now available|released|within 24 hours|under review/i);
+  assert.ok(html.indexOf('class="update-notice"') < html.indexOf('class="product-photo intro-photo"'));
+});
