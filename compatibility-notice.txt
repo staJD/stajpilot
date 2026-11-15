@@ -1,0 +1,7 @@
+Compatibility and proper operation with KEMPER PROFILER devices are not guaranteed.
+
+Changes to device hardware, firmware, communication protocols, or operating systems may affect, limit, or discontinue some or all functionality.
+
+Test your full setup before using it at an important event.
+
+Continued updates and support for StajPilot are not guaranteed.
