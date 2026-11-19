@@ -16,6 +16,11 @@
     { id: 8, name: 'TOPSIDE', image: 'amps/stajpilot_08_topside.webp' },
     { id: 9, name: 'IRONWORK', image: 'amps/stajpilot_09_ironwork.webp' },
     { id: 10, name: 'SIGNATURE', image: 'amps/stajpilot_10_signature.webp' },
+    { id: 11, name: 'SLO', image: 'amps/stajpilot_11_slo.webp' },
+    { id: 12, name: 'TWEED', image: 'amps/stajpilot_12_tweed.webp' },
+    { id: 13, name: 'IMPERIAL BROWN', image: 'amps/stajpilot_13_imperial_brown.webp' },
+    { id: 14, name: 'TWO ROCK', image: 'amps/stajpilot_14_two_rock.webp' },
+    { id: 15, name: 'ECSTASY', image: 'amps/stajpilot_15_ecstasy.webp' },
   ];
   const $ = (id) => document.getElementById(id);
   const elements = {

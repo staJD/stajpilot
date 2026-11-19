@@ -3,8 +3,8 @@ const test = require('node:test');
 const model = require('./model.js');
 const codec = require('./file_codec.js');
 
-test('all ten amp images survive Song files with existing image metadata', async () => {
-  const songs = [model.emptySong(1), model.emptySong(2)];
+test('all fifteen amp images survive Song files with existing image metadata', async () => {
+  const songs = [model.emptySong(1), model.emptySong(2), model.emptySong(3)];
   for (const song of songs) {
     song.songName = `Gallery ${song.bank}`;
     song.slots.forEach((slot, index) => {
@@ -13,8 +13,9 @@ test('all ten amp images survive Song files with existing image metadata', async
   }
   const backup = {
     format: 'stajpilot-songs', version: 1, songs,
-    slotAmpImages: { '1': 6, '2': 7, '3': 8, '4': 9, '5': 10, '625': 3 },
-    rigAmpImages: { 'Existing Rig': 5, 'New Rig': 10 },
+    slotAmpImages: { '1': 6, '2': 7, '3': 8, '4': 9, '5': 10,
+      '11': 11, '12': 12, '13': 13, '14': 14, '15': 15, '625': 3 },
+    rigAmpImages: { 'Existing Rig': 5, 'New Rig': 15 },
   };
   const file = await codec.encode(model.exportLibrary(model.parseLibrary(backup)));
   const restored = model.parseLibrary(await codec.decode(file));
