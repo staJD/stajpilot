@@ -30,11 +30,11 @@ test('home update preview includes Wi-Fi precautions and the in-app notice', () 
   const update = html.match(/<section class="update-notice"[^>]*>([\s\S]*?)<\/section>/);
   assert.ok(update, 'Missing update preview');
   for (const text of [
-    'StajPilot 2.0.5',
+    'StajPilot 2.0.7',
     'Preparing for release',
-    'Wi-Fi connectivity for STAJ mode and an improved tuner',
+    'Wi-Fi PILOT editing with real-time bidirectional updates',
     'Existing USB MIDI connectivity remains available.',
-    'PILOT editing is not available in Wi-Fi mode.',
+    'A/B Morph, effect copy and paste, and user presets.',
     'Do not connect a USB cable to the KEMPER while using Wi-Fi mode.',
     'Connecting multiple devices to the KEMPER over Wi-Fi is not recommended.',
     'Experimental connection. Kemper does not provide official support for this connection.',
